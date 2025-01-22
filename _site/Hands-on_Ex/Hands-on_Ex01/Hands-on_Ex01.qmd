@@ -27,6 +27,24 @@ ggplot(data = exam_data,
   geom_bar()
 ```
 
+# Only show code without plot
+
+```{r}
+#| eval: false
+ggplot(data = exam_data,
+       aes(x = RACE)) + 
+  geom_bar()
+```
+
+# Only show chart without code
+
+```{r}
+#| echo: false
+ggplot(data = exam_data,
+       aes(x = RACE)) + 
+  geom_bar()
+```
+
 # Plotting a dot plot chart
 
 ```{r}
@@ -109,8 +127,9 @@ ggplot(data=exam_data,
   geom_boxplot(notch=TRUE)
 ```
 
-# Plotting a Boxplot graph (Notches) 
-# If exchanged x and y the plot turns 
+# Plotting a Boxplot graph (Notches)
+
+# If exchange x and y, the plot turns
 
 ```{r}
 ggplot(data=exam_data,
@@ -199,7 +218,7 @@ ggplot(data=exam_data,
   facet_wrap(~ CLASS)
 ```
 
-# Plotting with facet_grid() 
+# Plotting with facet_grid()
 
 ```{r}
 ggplot(data=exam_data,
