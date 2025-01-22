@@ -26,3 +26,235 @@ ggplot(data = exam_data,
        aes(x = RACE)) + 
   geom_bar()
 ```
+
+# Plotting a dot plot chart
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) +
+  geom_dotplot(dotsize = 0.5)
+```
+
+# Plotting a dot plot graph without y-scale
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) + 
+  geom_dotplot(binwidth=2.5,
+               dotsize = 0.5) +
+  scale_y_continuous(NULL,
+                     breaks = NULL)
+```
+
+# Plotting a histogram graph
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) +
+  geom_histogram()
+```
+
+# Plotting a histogram graph (modified geom())
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) + 
+  geom_histogram(bins=20,
+                 color="black",
+                 fill="light blue")
+```
+
+# Plotting a histogram graph (modified aes())
+
+```{r}
+ggplot(data=exam_data,
+       aes(x=MATHS,
+           fill = GENDER)) +
+  geom_histogram(bins=20,
+                 color="grey30")
+```
+
+# Plotting a Geom-density graph
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) +
+  geom_density()
+```
+
+# Plotting a Geom-density graph (fill arguments of aes())
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS,
+           colour = GENDER)) +
+  geom_density()
+```
+
+# Plotting a Boxplot graph
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS,
+           y = GENDER)) + 
+  geom_boxplot()
+```
+
+# Plotting a Boxplot graph (Notches)
+
+```{r}
+ggplot(data=exam_data,
+      aes(y = MATHS,
+          x = GENDER)) + 
+  geom_boxplot(notch=TRUE)
+```
+
+# Plotting a Boxplot graph (Notches) 
+# If exchanged x and y the plot turns 
+
+```{r}
+ggplot(data=exam_data,
+      aes(x = MATHS,
+          y = GENDER)) + 
+  geom_boxplot(notch=TRUE)
+```
+
+# Plotting a geom_violin graph
+
+```{r}
+ggplot(data=exam_data,
+       aes(y = MATHS,
+           x = GENDER)) + 
+  geom_violin()
+```
+
+# Plotting a geom_point graph
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS,
+           y = ENGLISH)) + 
+  geom_point()
+```
+
+# Plotting 2 charts
+
+```{r}
+ggplot(data=exam_data,
+       aes(y = MATHS,
+           x = GENDER)) + 
+  geom_boxplot() + 
+  geom_point(position="jitter",
+             size = 0.5)
+```
+
+# Plotting stat() graph
+
+```{r}
+ggplot(data=exam_data,
+       aes(y = MATHS, x = GENDER)) + 
+  geom_boxplot() + 
+  stat_summary(geom = "point",
+               fun = "mean",
+               colour = "red",
+               size = 4)
+```
+
+# Plotting stat() graph (geom() method)
+
+```{r}
+ggplot(data=exam_data,
+       aes(y = MATHS, x = GENDER)) + 
+  geom_boxplot() + 
+  geom_point(stat = "summary",
+               fun = "mean",
+               colour = "red",
+               size = 4)
+```
+
+# Plotting scatterplot graph with best fit curve
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS, y = ENGLISH)) + 
+  geom_point() + 
+  geom_smooth(size=0.5)
+```
+
+# Using latest version (linewidth)
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS, y = ENGLISH)) + 
+  geom_point() + 
+  geom_smooth(linewidth=0.5)
+```
+
+# Plotting with facet_wrap()
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) + 
+  geom_histogram(bins=20) +
+  facet_wrap(~ CLASS)
+```
+
+# Plotting with facet_grid() 
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS)) +
+  geom_histogram(bins=20) + 
+  facet_grid(~ CLASS)
+```
+
+# Flipping barchart with coord_flip()
+
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) + 
+  geom_bar() + 
+  coord_flip()
+```
+
+# Fixing y-axis and x-axis range
+
+```{r}
+ggplot(data=exam_data,
+       aes(x = MATHS, y = ENGLISH)) + 
+  geom_point() + 
+  geom_smooth(method=lm,
+              size=0.5) + 
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+```
+
+# Working with theme
+
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) + 
+  geom_bar() + 
+  coord_flip() + 
+  theme_gray()
+```
+
+# Working with theme_classic()
+
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) + 
+  geom_bar() + 
+  coord_flip() + 
+  theme_classic()
+```
+
+# Working with theme_minimal()
+
+```{r}
+ggplot(data=exam_data,
+       aes(x=RACE)) + 
+  geom_bar() + 
+  coord_flip() + 
+  theme_minimal()
+```
