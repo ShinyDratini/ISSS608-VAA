@@ -2,7 +2,7 @@
 title: "ISSS608-VAA"
 ---
 
-\# Welcome
+# Welcome
 
 Welcome to **ISSS608 Visual Analytics and Applications**. In this website, you will find my coursework prepared for this course.
 
@@ -16,11 +16,11 @@ Details about the hands-on exercises can go here.
 
 ### In-Class Exercises
 
-Details about the hands-on exercises can go here.
+Details about the In-Class exercises can go here.
 
 ### Take-Home Exercises
 
-Details about the hands-on exercises can go here.
+Details about the Take-Home exercises can go here.
 
 ## Additional Resources
 

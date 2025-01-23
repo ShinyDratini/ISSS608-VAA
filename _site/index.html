@@ -88,21 +88,33 @@ ul.task-list li input[type="checkbox"] {
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercise" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Hands-on Exercise</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercises" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Hands-on Exercises</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercise">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercises">    
         <li>
     <a class="dropdown-item" href="./Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html">
  <span class="dropdown-text">Hands-on Exercise 1</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html">
+ <span class="dropdown-text">Hands-on Exercise 2</span></a>
+  </li>  
     </ul>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -125,8 +137,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On This Page</h2>
    
   <ul class="collapse">
-  <li><a href="#coursework-overview" id="toc-coursework-overview" class="nav-link active" data-scroll-target="#coursework-overview">Coursework Overview</a></li>
+  <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome">Welcome</a>
+  <ul class="collapse">
+  <li><a href="#coursework-overview" id="toc-coursework-overview" class="nav-link" data-scroll-target="#coursework-overview">Coursework Overview</a></li>
   <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional Resources</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -152,7 +167,8 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p># Welcome</p>
+<section id="welcome" class="level1">
+<h1>Welcome</h1>
 <p>Welcome to <strong>ISSS608 Visual Analytics and Applications</strong>. In this website, you will find my coursework prepared for this course.</p>
 <section id="coursework-overview" class="level2">
 <h2 class="anchored" data-anchor-id="coursework-overview">Coursework Overview</h2>
@@ -163,9 +179,11 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="in-class-exercises" class="level3">
 <h3 class="anchored" data-anchor-id="in-class-exercises">In-Class Exercises</h3>
-<p>Details about the hands-on exercises can go here.</p>
-<p>## Take-Home Exercises</p>
-<p>Details about the hands-on exercises can go here.</p>
+<p>Details about the In-Class exercises can go here.</p>
+</section>
+<section id="take-home-exercises" class="level3">
+<h3 class="anchored" data-anchor-id="take-home-exercises">Take-Home Exercises</h3>
+<p>Details about the Take-Home exercises can go here.</p>
 </section>
 </section>
 <section id="additional-resources" class="level2">
@@ -173,6 +191,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Links or references to resources used for the course.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
