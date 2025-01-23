@@ -16,9 +16,11 @@ website:
 
 format:
   html:
-    theme: morph
+    theme: lumen
     css: styles.css
     toc: true
+    toc-title: "On This Page"
+    toc-depth: 2
 
 editor: visual
 
