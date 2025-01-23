@@ -19,12 +19,6 @@ pacman::p_load(tidyverse)
 exam_data <- read_csv("data/Exam_data.csv")
 ```
 
-# A Layered Grammar of Graphics
-
-#### ggplot2 is an implementation of Leleand Wilkinson's Grammar of Graphics. The figure below shows the seven grammars of ggplot2.
-
-![Reference: Hadley Wickham (2010) “A layered grammar of graphics.” Journal of Computational and Graphical Statistics, vol. 19, no. 1, pp. 3–28.](/picture/image4.jpg){fig-align="center" width="897"}
-
 # Plotting a simple bar chart
 
 ```{r}
