@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "ISSS608-VAA",
     "section": "",
-    "text": "Welcome to ISSS608 Visual Analytics and Applications. In this website, you will find my coursework prepared for this course."
+    "text": "# Welcome\nWelcome to ISSS608 Visual Analytics and Applications. In this website, you will find my coursework prepared for this course."
   },
   {
     "objectID": "about.html",
@@ -12,5 +12,26 @@
     "title": "About",
     "section": "",
     "text": "About this site\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "index.html#coursework-overview",
+    "href": "index.html#coursework-overview",
+    "title": "ISSS608-VAA",
+    "section": "Coursework Overview",
+    "text": "Coursework Overview\nThis section provides an overview of the coursework.\n\nHands-on Exercises\nDetails about the hands-on exercises can go here.\n\n\nIn-Class Exercises\nDetails about the hands-on exercises can go here.\n## Take-Home Exercises\nDetails about the hands-on exercises can go here."
+  },
+  {
+    "objectID": "index.html#additional-resources",
+    "href": "index.html#additional-resources",
+    "title": "ISSS608-VAA",
+    "section": "Additional Resources",
+    "text": "Additional Resources\nLinks or references to resources used for the course."
+  },
+  {
+    "objectID": "index.html#take-home-exercises",
+    "href": "index.html#take-home-exercises",
+    "title": "ISSS608-VAA",
+    "section": "Take-Home Exercises",
+    "text": "Take-Home Exercises\nDetails about the hands-on exercises can go here."
   }
 ]
