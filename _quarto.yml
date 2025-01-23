@@ -20,7 +20,7 @@ website:
 
 format:
   html:
-    theme: morph
+    theme: zephyr
     css: styles.css
     toc: true
     toc-title: "On This Page"
