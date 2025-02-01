@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "ISSS608-VAA",
     "section": "",
-    "text": "Welcome to ISSS608 Visual Analytics and Applications. In this website, you will find my coursework prepared for this course.\n\n\nThis section provides an overview of the coursework.\n\n\nDetails about the hands-on exercises can go here.\n\n\n\nDetails about the In-Class exercises can go here.\n\n\n\nDetails about the Take-Home exercises can go here.\n\n\n\n\nLinks or references to resources used for the course."
+    "text": "Welcome to ISSS608 Visual Analytics and Applications. In this website, you will find my coursework prepared for this course.\n\nknitr::include_graphics(\"image_with_text.png\")\n\n\n\n\n\n\n\n\n\n\nThis section provides an overview of the coursework.\n\n\nDetails about the hands-on exercises can go here.\n\n\n\nDetails about the In-Class exercises can go here.\n\n\n\nDetails about the Take-Home exercises can go here.\n\n\n\n\nLinks or references to resources used for the course."
   },
   {
     "objectID": "about.html",
