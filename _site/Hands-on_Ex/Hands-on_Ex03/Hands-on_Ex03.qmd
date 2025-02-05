@@ -327,7 +327,7 @@ pacman::p_load(readxl, gifski, gapminder,
                plotly, gganimate, tidyverse)
 ```
 
-# Importing the data
+## Importing the data
 
 ```{r}
 col <- c("Country", "Continent")
