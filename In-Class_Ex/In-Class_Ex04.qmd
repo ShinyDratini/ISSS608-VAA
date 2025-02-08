@@ -1,0 +1,67 @@
+---
+title: "In-Class_Ex04"
+author: "Justin"
+---
+
+## Getting started
+
+### Instalilng and loading R Packages
+
+```{r}
+pacman::p_load(haven, SmartEDA, tidyverse, tidymodels)
+```
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+```{r}
+ggplot(data = exam_data,
+       aes(x = ENGLISH,
+           y = CLASS)) + 
+  geom_boxplot()
+
+```
+
+```{r}
+pacman::p_load(ggdist, ggridges, ggthemes,
+               colorspace, tidyverse)
+```
+
+# Density Ridge
+
+```{r}
+ggplot(exam_data,
+       aes(x = ENGLISH,
+           y = CLASS)) + 
+  geom_density_ridges(
+    scale = 3,
+    rel_min_height = 0.01,
+    bandwidth = 3.4,
+    fill = lighten("8709788", .3),
+    color = "white"
+  ) + 
+  scale_x_continuous(
+    name = "English grades",
+    expand = c(0,0)
+  ) + 
+  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2,2.6))) + theme_ridges()
+```
+
+```{r}
+ggplot(exam_data,
+       aes(x = RACE,
+           y = ENGLISH)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width =  0,
+               point_colour = NA) +
+  geom_boxplot(width = 0.2,
+               outlier.shape = NA) +
+  stat_dots(side = "left",
+            justifcation = 1.2,
+            binwidth = .5,
+            dotsize = 2)
+```
+
+
