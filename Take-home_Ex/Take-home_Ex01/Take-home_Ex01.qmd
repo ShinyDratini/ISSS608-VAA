@@ -1,6 +1,796 @@
 ---
-title: "Take-home Exercise 1"
+title: "Take-home Exercise 1: Ship Performance in the Gulf of Guinea"
 author: "Justin"
 date: "February 01, 2025"
 date-modified: "last-modified" 
 ---
+
+# Overview
+
+## Setting the Scene
+
+#### The Gulf of Guinea is a region rich in natural resources. It holds significant reserves of gas and oil as well as other valuable minerals. It is an important shipping zone transporting oil, gas and other commodities to and from central and southern Africa. It is also a hotspot for piracy. In 2020, there are 78 piracy incidents and 130 seafarers kidnapped for ransom.
+
+## Task
+
+### This study is conducted to find the corelation between the type of ships and and the revenue they bring in in the Gulf of Guinea. This will allow government officals to better strategize on how to improve security in the region.
+
+# Getting Started
+
+## Load the packages
+
+### We load the following R packages using the pacman::p_load() function:
+
+### Smarteda:
+
+### tidyverse:
+
+### tidymodels:
+
+```{r}
+library(readr)
+pacman::p_load(SmartEDA, tidyverse, tidymodels, lubridate, 
+               knitr, dplyr, ggplot2, ggHoriPlot, ggthemes, corrplot, ggstatsplot,
+               ggdist, ggridges, car, plotly,
+               colorspace)
+```
+
+## Data Source and Data Importing
+
+```{r}
+# Read CSV file with proper column type specification
+df <- read_csv("data/Ship_Performance_Dataset.csv", col_types = cols(Date = col_date(format = "%Y-%m-%d")))
+
+# Check if Date conversion was successful
+str(df)
+```
+
+## Data Pre-processing
+
+```{r, ECHO = FALSE}
+# Summary statistics of the dataset
+summary(df)
+
+# Check dimensions (rows, columns)
+dim(df)
+
+# Count unique values in a single column
+df %>% summarise_all(n_distinct)
+```
+
+```{r}
+# Remove rows where any non-Date column contains "None"
+df <- df[!apply(df[, !names(df) %in% "Date"], 1, function(row) any(row == "None")), ]
+```
+
+```{r}
+# Create a new column for Year-Month binning
+df <- df %>%
+  mutate(Month = floor_date(Date, "month")) %>%  # Truncate date to the first day of the month
+  mutate(Profit = Revenue_per_Voyage_USD - Operational_Cost_USD)  # Calculate profit
+```
+
+```{r}
+str(df)
+```
+
+```{r}
+ggplot(df, aes(x = Month, y = Profit, fill = Ship_Type)) +
+  geom_bar(stat = "identity", position = "stack") +  
+  labs(title = "Monthly Profit by Ship Type",
+       x = "Month", y = "Profit (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+ggplot(df, aes(x = Month, y = Profit, fill = Ship_Type)) +
+  geom_boxplot() +
+  labs(title = "Profit Distribution by Ship Type Per Month",
+       x = "Month", y = "Profit (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+ggplot(df, aes(x = Month, y = Ship_Type, fill = Profit)) +
+  geom_tile() +
+  scale_fill_gradient(low = "blue", high = "red") +  
+  labs(title = "Monthly Profit Heatmap by Ship Type",
+       x = "Month", y = "Ship Type", fill = "Profit (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+library(viridis)
+
+ggplot(df, aes(x = Month, y = Ship_Type, fill = Profit)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "plasma") +  
+  labs(title = "Monthly Profit Heatmap by Ship Type",
+       x = "Month", y = "Ship Type", fill = "Profit (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+# viridis uses plasma which is colourblind friendly
+
+```{r}
+# Create a Month column
+df <- df %>%
+  mutate(Month = format(Date, "%Y-%m")) %>%
+  mutate(Cargo_Weight_Bin = cut(Cargo_Weight_tons, breaks = 5, labels = c("Very Light", "Light", "Medium", "Heavy", "Very Heavy")))
+
+# Faceted bar chart with cargo weight bins
+ggplot(df, aes(x = Month, y = Profit, fill = Cargo_Weight_Bin)) +
+  geom_bar(stat = "identity", position = "dodge") +  # Dodge to separate the bins
+  facet_wrap(~Ship_Type, scales = "free_y") +  # Facet by ship type
+  labs(title = "Monthly Profit by Ship Type and Cargo Weight Bins",
+       x = "Month", y = "Profit (USD)", fill = "Cargo Weight Bin") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels
+```
+
+```{r}
+df <- df %>%
+  mutate(Month = format(Date, "%Y-%m")) %>%
+  mutate(Load_Percentage_Bin = cut(Average_Load_Percentage, 
+                                   breaks = 5, 
+                                   labels = c("Very Low", "Low", "Medium", "High", "Very High")))
+
+# Faceted bar chart with load percentage bins
+ggplot(df, aes(x = Month, y = Profit, fill = Load_Percentage_Bin)) +
+  geom_bar(stat = "identity", position = "dodge") +  # Dodge to separate bins
+  facet_wrap(~Ship_Type, scales = "free_y") +  # Facet by ship type
+  labs(title = "Monthly Profit by Ship Type and Load Percentage Bins",
+       x = "Month", y = "Profit (USD)", fill = "Load Percentage Bin") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels
+```
+
+```{r}
+# Scatter plot with regression line
+ggplot(df, aes(x = Cargo_Weight_tons, y = Profit, color = Ship_Type)) +
+  geom_point(alpha = 0.6, size = 3) +  # Scatter points
+  geom_smooth(method = "lm", se = FALSE) +  # Linear trend line
+  facet_wrap(~Route_Type) +  # Facet by Route Type
+  labs(title = "Effect of Cargo Weight on Profitability",
+       x = "Cargo Weight (tons)", y = "Profit (USD)", color = "Ship Type") +
+  theme_minimal()
+```
+
+### Analyze how Cargo_Weight_tons influences fuel consumption (Engine_Power_kW) and efficiency.
+
+```{r}
+df <- df %>%
+  mutate(Cargo_Weight_Bin = cut(Cargo_Weight_tons, breaks = 5, labels = c("Very Light", "Light", "Medium", "Heavy", "Very Heavy")))
+
+ggplot(df, aes(x = Cargo_Weight_Bin, y = Efficiency_nm_per_kWh, fill = Ship_Type)) +
+  geom_boxplot() +
+  labs(title = "Efficiency by Cargo Weight Category",
+       x = "Cargo Weight Category", y = "Efficiency (nm per kWh)", fill = "Ship Type") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# Step 1: Convert numeric columns from character to numeric
+df <- df %>%
+  mutate(across(c(Speed_Over_Ground_knots, Engine_Power_kW, Distance_Traveled_nm, 
+                  Draft_meters, Cargo_Weight_tons, Operational_Cost_USD, 
+                  Revenue_per_Voyage_USD, Turnaround_Time_hours, Efficiency_nm_per_kWh, 
+                  Seasonal_Impact_Score, Weekly_Voyage_Count, Average_Load_Percentage),
+                as.numeric))
+
+# Step 2: Select only numeric columns
+numeric_df <- df %>% select(where(is.numeric))
+
+# Step 3: Check structure to verify conversion and ensure data exists
+str(numeric_df)
+
+# Step 4: Ensure data exists after transformation
+if(ncol(numeric_df) > 0) {
+  
+  # Histogram for numerical columns
+  numeric_df %>%
+    pivot_longer(cols = everything(), names_to = "variable", values_to = "value") %>%
+    ggplot(aes(x = value)) +
+    geom_histogram(fill = "skyblue", color = "black", bins = 30) +
+    facet_wrap(~variable, scales = "free", ncol = 3) +
+    theme_minimal() +
+    labs(title = "Histograms of Numerical Columns", x = "Value", y = "Frequency")
+  
+  # Boxplots for numerical columns
+  numeric_df %>%
+    pivot_longer(cols = everything(), names_to = "variable", values_to = "value") %>%
+    ggplot(aes(x = variable, y = value)) +
+    geom_boxplot(fill = "orange", color = "black") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(title = "Boxplots of Numerical Columns", x = "Variable", y = "Value")
+  
+} else {
+  print("No numeric columns available for plotting.")
+}
+```
+
+### Smarteda
+
+```{r}
+ExpCatStat(df, Target = "Revenue_per_Voyage_USD", result = "stat")
+```
+
+# Chi-squared results shows some variable with high level of association and some with lower level of association. For Engine_Type, Maintenance_Status and Weather_Condition have lower level of association compared to Variables such as Distance_Traveled_nm and Engine_Power_kW.
+
+# We note that p-value is \> 0.05 for all the variables except for Weekly_Voyage_Count.A high p-value suggests that the relationship is not statistically significant. In other words, the observed association could easily occur by random chance.
+
+```{r}
+ggplot(data=df, 
+       aes(x= Cargo_Weight_tons, 
+           y= Turnaround_Time_hours)) +
+  geom_point()  
+
+ggplot(data=df, 
+       aes(x= Weekly_Voyage_Count, 
+           fill = Weather_Condition)) +
+  geom_histogram(bins=20, 
+                 color="grey30")
+
+ggplot(data=df, 
+       aes(x= Weekly_Voyage_Count, 
+           fill = Ship_Type)) +
+  geom_histogram(bins=20, 
+                 color="grey30")
+```
+
+```{r}
+ggplot(df, aes(x = Engine_Power_kW, y = Revenue_per_Voyage_USD, color = Ship_Type)) +
+  geom_point() +
+  labs(title = "Engine Power vs. Revenue per Voyage by Ship Type",
+       x = "Engine Power (kW)",
+       y = "Revenue per Voyage (USD)") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(df, aes(x = Engine_Power_kW, y = Revenue_per_Voyage_USD, color = Engine_Type)) +
+  geom_point(alpha = 0.7) +
+  facet_wrap(~ Ship_Type) +
+  labs(title = "Engine Power vs. Revenue per Voyage by Ship Type and Engine Type",
+       x = "Engine Power (kW)",
+       y = "Revenue per Voyage (USD)") +
+  theme_minimal()
+```
+
+
+```{r}
+# Select only numerical columns for correlation
+num_data <- df[, sapply(df, is.numeric)]
+
+# Compute correlation matrix
+cor_matrix <- cor(num_data, use = "complete.obs")
+
+# Display correlation with Revenue_per_Voyage_USD
+cor_with_revenue <- cor_matrix[, "Revenue_per_Voyage_USD"]
+
+# Sort by highest correlation
+sorted_cor <- sort(cor_with_revenue, decreasing = TRUE)
+print(sorted_cor)
+```
+
+# From the Correlation Matrix, we can observe that none of the numerical variables have strong linear relationships with revenue.
+
+```{r}
+# ANOVA for Ship Type
+anova_ship <- aov(Revenue_per_Voyage_USD ~ Ship_Type, data = df)
+summary(anova_ship)
+
+# ANOVA for Route Type
+anova_route <- aov(Revenue_per_Voyage_USD ~ Route_Type, data = df)
+summary(anova_route)
+```
+
+```{r}
+# Revenue by Ship Type
+ggplot(df, aes(x = Ship_Type, y = Revenue_per_Voyage_USD, fill = Ship_Type)) +
+  geom_boxplot() +
+  labs(title = "Revenue per Voyage by Ship Type",
+       x = "Ship Type",
+       y = "Revenue per Voyage (USD)") +
+  theme_minimal()
+
+# Revenue by Route Type
+ggplot(df, aes(x = Route_Type, y = Revenue_per_Voyage_USD, fill = Route_Type)) +
+  geom_boxplot() +
+  labs(title = "Revenue per Voyage by Route Type",
+       x = "Route Type",
+       y = "Revenue per Voyage (USD)") +
+  theme_minimal()
+```
+
+# Clustering
+
+```{r}
+# Check for missing values in the dataset
+sum(is.na(df))
+
+# Remove rows with missing values
+df_clean <- na.omit(df)
+
+# Select only numeric columns for clustering
+numeric_cols <- sapply(df_clean, is.numeric)
+df_numeric <- df_clean[, numeric_cols]
+
+# Scale the numerical data
+df_scaled <- scale(df_numeric)
+```
+
+
+# Profitability Analysis
+
+```{r}
+df_new <- df %>%
+  mutate(Profit_per_Voyage_USD = Revenue_per_Voyage_USD - Operational_Cost_USD)
+
+# Analyze Profit by Ship_Type
+profit_by_ship_type <- df_new %>%
+  group_by(Ship_Type) %>%
+  summarise(Average_Profit = mean(Profit_per_Voyage_USD),
+            Total_Profit = sum(Profit_per_Voyage_USD),
+            Count = n())
+
+# Analyze Profit by Engine_Type
+profit_by_engine_type <- df_new %>%
+  group_by(Engine_Type) %>%
+  summarise(Average_Profit = mean(Profit_per_Voyage_USD),
+            Total_Profit = sum(Profit_per_Voyage_USD),
+            Count = n())
+
+# Analyze Profit by Route_Type
+profit_by_route_type <- df_new %>%
+  group_by(Route_Type) %>%
+  summarise(Average_Profit = mean(Profit_per_Voyage_USD),
+            Total_Profit = sum(Profit_per_Voyage_USD),
+            Count = n())
+
+# Display results
+print(profit_by_ship_type)
+print(profit_by_engine_type)
+print(profit_by_route_type)
+```
+
+# Plotting the Profitability Analysis
+
+```{r}
+df_new <- df %>%
+  mutate(Profit_per_Voyage_USD = Revenue_per_Voyage_USD - Operational_Cost_USD)
+
+# Analyze Profit by Ship_Type, Engine_Type, and Route_Type
+profit_analysis <- df_new %>%
+  group_by(Ship_Type, Engine_Type, Route_Type) %>%
+  summarise(Average_Profit = mean(Profit_per_Voyage_USD),
+            Total_Profit = sum(Profit_per_Voyage_USD),
+            Count = n(), .groups = 'drop')
+
+# Display results
+print(profit_analysis)
+
+# Visualize the combined results using ggplot2
+# Faceted bar plot to show Average Profit by Ship_Type, Engine_Type, and Route_Type
+ggplot(profit_analysis, aes(x = Ship_Type, y = Average_Profit, fill = Engine_Type)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  facet_wrap(~ Route_Type) +
+  theme_minimal() +
+  labs(title = "Average Profit by Ship Type, Engine Type, and Route Type",
+       y = "Average Profit (USD)",
+       x = "Ship Type") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+# Turnaround Analysis
+
+```{r}
+turnaround_analysis <- df %>%
+  group_by(Weather_Condition, Route_Type) %>%
+  summarise(Average_Turnaround_Time = mean(Turnaround_Time_hours),
+            Count = n(), .groups = 'drop')
+
+# Display results
+print(turnaround_analysis)
+```
+
+```{r}
+# Visualize Turnaround Time
+# Bar plot to show Average Turnaround Time by Weather_Condition and Route_Type
+ggplot(turnaround_analysis, aes(x = Weather_Condition, y = Average_Turnaround_Time, fill = Route_Type)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  theme_minimal() +
+  labs(title = "Average Turnaround Time by Weather Condition and Route Type",
+       y = "Average Turnaround Time (hours)",
+       x = "Weather Condition") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# Analyze Turnaround Time by Route_Type, Cargo_Weight_tons, and Distance_Traveled_nm
+ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Cargo_Weight_tons)) +
+  geom_point(alpha = 0.7) +
+  facet_wrap(~ Route_Type) +
+  theme_minimal() +
+  labs(title = "Turnaround Time by Route Type, Cargo Weight, and Distance Traveled",
+       x = "Distance Traveled (nm)",
+       y = "Turnaround Time (hours)",
+       color = "Cargo Weight (tons)")
+```
+
+
+```{r}
+# Violin Plot: Cargo Weight vs Engine Power by Route Type
+ggplot(df, aes(x = Route_Type, y = Engine_Power_kW, fill = Route_Type)) +
+  geom_violin(trim = FALSE) +
+  theme_minimal() +
+  labs(title = "Distribution of Engine Power by Route Type",
+       y = "Engine Power (kW)",
+       x = "Route Type") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+df %>%
+  group_by(Ship_Type, Route_Type) %>%
+  summarise(Avg_Efficiency = mean(Efficiency_nm_per_kWh, na.rm = TRUE)) %>%
+  ggplot(aes(x = Ship_Type, y = Route_Type, fill = Avg_Efficiency)) +
+  geom_tile() +
+  theme_minimal()
+```
+
+### Check for Duplicates
+
+### Check for Missing Values and Fixing Data Types
+
+# Data Exploration
+
+## Multivariate Analysis
+
+## Outlier Detection
+
+# Advanced Data Visualisation
+
+## Interactive Plots
+
+```{r}
+# Convert the 'Date' column to Date type if not already
+df$Date <- as.Date(df$Date)
+
+# Summarize the data by unique combinations of Ship_Type, Route_Type, Engine_Type, and Maintenance_Status
+summary_data <- df %>%
+  group_by(Ship_Type, Route_Type, Engine_Type, Maintenance_Status, Date) %>%
+  summarise(
+    Total_Operational_Cost = sum(Operational_Cost_USD, na.rm = TRUE),
+    Total_Revenue = sum(Revenue_per_Voyage_USD, na.rm = TRUE),
+    Profit = sum(Revenue_per_Voyage_USD, na.rm = TRUE) - sum(Operational_Cost_USD, na.rm = TRUE),
+    .groups = "drop"  # ✅ FIX: Removes unnecessary grouping
+  ) 
+
+# Create an interactive plot with plotly and add a slider for the date range
+bp <- plot_ly(
+  data = summary_data,
+  x = ~Total_Operational_Cost, 
+  y = ~Total_Revenue, 
+  size = ~Total_Operational_Cost, 
+  color = ~as.factor(Maintenance_Status),  # Use Maintenance_Status for color
+  sizes = c(2, 100), 
+  frame = ~Date,  # Use the Date column for the slider
+  text = ~paste("Ship Type:", Ship_Type,
+                "<br>Route Type:", Route_Type,
+                "<br>Engine Type:", Engine_Type,
+                "<br>Maintenance Status:", Maintenance_Status,
+                "<br>Date:", Date,
+                "<br>Profit (USD):", Profit),
+  hoverinfo = "text",  # Display text when hovering over points
+  type = 'scatter', 
+  mode = 'markers'
+) %>%
+  layout(
+    title = "Operational Cost vs Revenue per Voyage",
+    xaxis = list(title = "Total Operational Cost (USD)"),
+    yaxis = list(title = "Total Revenue per Voyage (USD)"),
+    showlegend = TRUE
+  ) %>%
+  animation_opts(
+    frame = 100, 
+    redraw = TRUE
+  ) %>%
+  animation_slider(
+    currentvalue = list(prefix = "Date: ")
+  )
+
+# Display the plot
+bp
+```
+
+
+
+
+
+```{r}
+
+# Summarize the data by unique combinations of Ship_Type, Route_Type, Engine_Type, and Maintenance_Status
+summary_data <- df %>%
+  group_by(Ship_Type, Route_Type, Engine_Type, Maintenance_Status) %>%
+  summarise(
+    Total_Operational_Cost = sum(Operational_Cost_USD, na.rm = TRUE),
+    Total_Revenue = sum(Revenue_per_Voyage_USD, na.rm = TRUE)
+  )
+
+# Check if the summarization gives you 144 rows (should be the case)
+nrow(summary_data)
+
+# Create an interactive scatter plot with plotly
+interactive_plot <- plot_ly(summary_data, 
+                            x = ~Total_Operational_Cost, 
+                            y = ~Total_Revenue, 
+                            color = ~Ship_Type, 
+                            size = ~Total_Operational_Cost, 
+                            type = 'scatter', 
+                            mode = 'markers', 
+                            text = ~paste("Ship Type:", Ship_Type,
+                                          "<br>Route Type:", Route_Type,
+                                          "<br>Engine Type:", Engine_Type,
+                                          "<br>Maintenance Status:", Maintenance_Status)) %>%
+  layout(
+    title = "Operational Cost vs Revenue per Voyage",
+    xaxis = list(title = "Total Operational Cost (USD)"),
+    yaxis = list(title = "Total Revenue per Voyage (USD)"),
+    showlegend = TRUE
+  )
+
+# Display the plot
+interactive_plot
+```
+
+
+
+```{r}
+# Summarize the data
+summary_data <- df %>%
+  group_by(Ship_Type, Route_Type, Engine_Type, Maintenance_Status) %>%
+  summarise(
+    Total_Operational_Cost = sum(Operational_Cost_USD, na.rm = TRUE),
+    Total_Revenue = sum(Revenue_per_Voyage_USD, na.rm = TRUE)
+  )
+# Create a plot using ggplot2
+gg <- ggplot(summary_data, 
+             aes(x = Total_Operational_Cost, 
+                 y = Total_Revenue, 
+                 size = Total_Operational_Cost, 
+                 colour = Ship_Type)) +
+  geom_point(alpha = 0.7, show.legend = TRUE) +
+  scale_size(range = c(2, 12)) +
+  labs(x = 'Total Operational Cost (USD)', 
+       y = 'Total Revenue per Voyage (USD)') +
+  theme_minimal()
+
+# Make the plot interactive with plotly
+ggplotly(gg)
+```
+
+```{r}
+# Create an interactive plot
+p <- plot_ly(data = df, 
+             x = ~Date, 
+             y = ~Profit, 
+             color = ~interaction(Route_Type, Ship_Type), 
+             type = 'scatter', 
+             mode = 'lines', 
+             hoverinfo = 'text', 
+             text = ~paste('Date:', Date, '<br>Profit:', Profit, '<br>Route:', Route_Type, '<br>Ship:', Ship_Type)) %>%
+  layout(title = "Profit by Route Type and Ship Type",
+         xaxis = list(title = "Date"),
+         yaxis = list(title = "Profit (USD)"),
+         showlegend = TRUE,
+         xaxis = list(rangeslider = list(type = "date")))  # Adds the date range slider
+
+# Show the plot
+p
+```
+
+# Time-Series Analysis
+
+## Profit Trends by Ship Type
+
+```{r}
+df %>%
+  filter(Date >= "2018-01-01") %>%
+  ggplot() +
+  geom_horizon(aes(x = Date, y = Profit), 
+               origin = "midpoint", 
+               horizonscale = 6) +
+  facet_grid(Ship_Type~.) +
+  theme_few() +
+  scale_fill_hcl(palette = 'RdBu') +
+  labs(title = "Profit Trends by Ship Type (Jan 2018 to Present)",
+       x = "Date", y = "Profit (USD)") +
+  theme(
+    panel.spacing.y = unit(0, "lines"), 
+    strip.text.y = element_text(size = 5, angle = 0, hjust = 0),
+    legend.position = 'none',
+    axis.text.y = element_blank(),
+    axis.text.x = element_text(size = 7),
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.border = element_blank()
+  ) +
+  scale_x_date(expand=c(0,0), date_breaks = "3 month", date_labels = "%b%y")
+```
+
+## Weather Condition Analysis
+
+::::: panel-tabset
+```{r}
+# Count occurrences of Weather Condition per Date
+grouped1 <- df %>% 
+  count(Date, Weather_Condition) %>% 
+  ungroup() %>%
+  na.omit()
+
+# Heatmap 1: Weather Condition Frequency by Date
+ggplot(grouped1, aes(x = Date, y = Weather_Condition, fill = n)) + 
+  geom_tile(color = "white", size = 0.1) + 
+  theme_minimal() +
+  scale_fill_gradient(name = "# of Occurrences",
+                      low = "lightblue", high = "darkblue") +
+  labs(title = "Weather Condition Frequency by Date",
+       x = "Date", y = "Weather Condition") +
+  theme(axis.ticks = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Turnaround Time by Weather Condition
+
+```{r}
+# Aggregate average turnaround time by Date & Weather Condition
+grouped2 <- df %>% 
+  group_by(Date, Weather_Condition) %>% 
+  summarise(Avg_Turnaround = mean(Turnaround_Time_hours, na.rm = TRUE)) %>% 
+  ungroup()
+
+# Heatmap 2: Turnaround Time by Weather Condition and Date
+ggplot(grouped2, aes(x = Date, y = Weather_Condition, fill = Avg_Turnaround)) + 
+  geom_tile(color = "white", size = 0.1) + 
+  theme_minimal() +
+  scale_fill_gradient(name = "Avg Turnaround (hrs)",
+                      low = "lightgreen", high = "red") +  
+  labs(title = "Turnaround Time by Weather Condition",
+       x = "Date", y = "Weather Condition") +
+  theme(axis.ticks = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+::: {.panel-tabset}\`: Creates a **tab layout**.
+
+# Statistical Testing (ANOVA)
+
+```{r}
+# Run ANOVA for each Ship Type & Engine Type
+anova_results <- list()
+
+for (ship in unique(df$Ship_Type)) {
+  for (engine in unique(df$Engine_Type)) {
+    
+    # Subset the data
+    subset_data <- df %>%
+      filter(Ship_Type == ship, Engine_Type == engine)
+    
+    # Ensure there are at least 2 unique Maintenance Status levels
+    if (length(unique(subset_data$Maintenance_Status)) > 1) {
+      
+      # Run ANOVA
+      anova_model <- aov(Operational_Cost_USD ~ Maintenance_Status, data = subset_data)
+      
+      # Store results
+      anova_results[[paste(ship, engine, sep = " - ")]] <- summary(anova_model)
+    }
+  }
+}
+
+# Print results
+anova_results
+```
+
+## Container Ship - Steam Turbine
+
+## p-value: 0.00146 (Significant at 0.01 level)
+
+## Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). You can explore which maintenance levels contribute to the difference using post-hoc tests (e.g., Tukey HSD).
+
+## Bulk Carrier - Heavy Fuel Oil (HFO)
+
+## p-value: 0.00383 (Significant at 0.01 level)
+
+## Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). Again, post-hoc tests like Tukey HSD can be run to identify which maintenance statuses differ.
+
+```{r}
+# Filter the dataset for Bulk Carrier and Heavy Fuel Oil (HFO)
+container_ship_steamturbine_data <- subset(df, Ship_Type == "Container Ship" & Engine_Type == "Steam Turbine")
+
+# Run ANOVA for Operational Cost by Maintenance Status
+anova_model_hfo <- aov(Operational_Cost_USD ~ Maintenance_Status, data = container_ship_steamturbine_data)
+
+# Run the Tukey HSD test
+tukey_test <- TukeyHSD(anova_model_hfo)
+
+# Print the results of the Tukey test
+print(tukey_test)
+```
+
+::: callout-tip
+#### Tukey HSD test results for the Container Ship (Steam Turbine) above:
+
+✅ Fair vs. Critical: ✅ The difference in operational costs between "Fair" and "Critical" maintenance status is 45,571.73 USD. The confidence interval for this difference ranges from -13,059.80 USD to 104,203.30 USD. The p-value is 0.1605, which is not statistically significant (p \> 0.05). This suggests that the operational cost is not significantly different between the "Fair" and "Critical" maintenance statuses.
+
+✅ Good vs. Critical: ✅The difference in operational costs between "Good" and "Critical" maintenance status is 95,727.44 USD. The confidence interval for this difference ranges from 34,271.37 USD to 157,183.50 USD. The p-value is 0.0009, which is statistically significant (p \< 0.05). This indicates that the operational cost is significantly different between the "Good" and "Critical" maintenance statuses.
+
+✅ Good vs. Fair: ✅ The difference in operational costs between "Good" and "Fair" maintenance status is 50,155.71 USD. The confidence interval for this difference ranges from -9,909.12 USD to 110,220.50 USD. The p-value is 0.1217, which is not statistically significant (p \> 0.05). This indicates that the operational cost is not significantly different between the "Good" and "Fair" maintenance statuses.
+
+✅ Summary: ✅ The Good vs. Critical comparison is statistically significant, indicating that the maintenance status between "Good" and "Critical" has a significant effect on operational costs. The Fair vs. Critical and Good vs. Fair comparisons are not statistically significant, suggesting that there is no significant difference in operational costs between these groups for Container Ship - Steam Turbine.
+:::
+
+<details>
+
+<summary>▶ Show the code</summary>
+
+```{r}
+# Filter the dataset for Bulk Carrier and Heavy Fuel Oil (HFO)
+bulk_carrier_hfo_data <- subset(df, Ship_Type == "Bulk Carrier" & Engine_Type == "Heavy Fuel Oil (HFO)")
+
+# Run ANOVA for Operational Cost by Maintenance Status
+anova_model_hfo <- aov(Operational_Cost_USD ~ Maintenance_Status, data = bulk_carrier_hfo_data)
+
+# Run the Tukey HSD test
+tukey_test <- TukeyHSD(anova_model_hfo)
+
+# Print the results of the Tukey test
+print(tukey_test)
+```
+
+::: callout-tip
+#### Tukey HSD test results for the Bulk Carrier (HFO) above:
+
+✅ Fair vs. Critical: ✅ The difference in operational costs between "Fair" and "Critical" maintenance status is -70,404.32 USD. The confidence interval for this difference ranges from -126,508.99 USD to -14,299.64 USD. The p-value is 0.0096, which is statistically significant (p \< 0.05). This indicates that the operational cost is significantly different between the "Fair" and "Critical" maintenance statuses.
+
+✅ Good vs. Critical: ✅ The difference in operational costs between "Good" and "Critical" maintenance status is 2,772.82 USD. The confidence interval for this difference ranges from -57,093.13 USD to 62,638.76 USD. The p-value is 0.9934, which is not statistically significant (p \> 0.05). This indicates that the operational \## cost is not significantly different between the "Good" and "Critical" maintenance statuses.
+
+✅ Good vs. Fair: ✅ The difference in operational costs between "Good" and "Fair" maintenance status is 73,177.13 USD. The confidence interval for this difference ranges from 12,542.89 USD to 133,811.38 USD. The p-value is 0.0134, which is statistically significant (p \< 0.05). This suggests that the operational cost \## is significantly different between the "Good" and "Fair" maintenance statuses.
+
+✅ Summary: ✅ The Fair vs. Critical comparison and the Good vs. Fair comparison are statistically significant, indicating that maintenance status does have an effect on operational costs. The Good vs. Critical comparison is not statistically significant, suggesting that maintenance status between "Good" and "Critical" may not have a significant impact on operational cost for Bulk Carrier - Heavy Fuel Oil (HFO).
+:::
+
+<details>
+
+<summary>▶ Show the code</summary>
+
+```{r}
+ggplot(df, aes(x = Maintenance_Status, y = Operational_Cost_USD, fill = Ship_Type)) +
+  geom_boxplot() +
+  facet_wrap(~Engine_Type) +
+  labs(title = "Operational Cost by Maintenance Status, Ship Type, and Engine Type",
+       x = "Maintenance Status", y = "Operational Cost (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+# Predictive Modelling
+
+# Summary and Conclusion
+
+# References
+
+## https://www.iss.europa.eu/publications/briefs/deep-waters-maritime-security-landscape-gulf-guinea
+
+## https://www.eeas.europa.eu/sites/default/files/note_eu_gog_strategy.pdf
+
+:::::
+:::::
