@@ -21,14 +21,14 @@ This study aims to analyze the correlation between various factors affecting shi
 
 We load the following R packages using the pacman::p_load() function:
 
-| Library   | Description |
+| **Library**   | **Description** |
 |-----------|------------|
 | [tidyverse](https://www.tidyverse.org/) | A collection of packages designed for data science in R. (ggthemes, tidymodels, lubridate, knitr, dplyr) |
 | [ggplot2](https://ggplot2.tidyverse.org/) | Extensions such as ggHoriPlot, ggstatsplot, ggridges, ggdist |
 | [corrplot](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) | Used for correlation matrix visualisation. |
 | [car](https://www.geeksforgeeks.org/car-package-in-r/) | Companion to Applied Regression, used for statistical analysis. |
 | [plotly](https://plotly.com/) | Used to create interactive plots. |
-| [colorspace](https://cran.r-project.org/web/packages/colorspace/vignettes/colorspace.html)&nbsp; | Used in colour manipulation for visualisations. |
+| [colorspace](https://cran.r-project.org/web/packages/colorspace/vignettes/colorspace.html) | Used in colour manipulation for visualisations. |
 
 
 
@@ -46,24 +46,22 @@ Ship performance clustering dataset from  [Kaggle](https://www.kaggle.com/datase
 
 First we read the CSV file with proper column type specification
 
-| Numerical Features   | Description |
-|-----------|------------|
-
+| **Numerical Features**   | **Description** |
+|-------------------------|----------------|
 | Speed_Over_Ground_Knots | Average speed of the ship over water (in knots). |
 | Engine_Power_kW | Engine power output (in Kilowatts). |
 | Distance_Traveled_nm | The total distance travelled by the ship (in nautical miles). |
 | Operational_Cost_USD | Total operational cost per voyage (in USD). |
-| Revenue_per_Voyagae_USD | Revenue generated per voyage (in USD). |
+| Revenue_per_Voyage_USD | Revenue generated per voyage (in USD). |
 | Efficiency_nm_per_kWh | Energy efficiency calculated in nautical miles per kilowatt-hour. |
 
-| Categorical Features   | Description |
-|-----------|------------|
-
-| Ship_Type | Type of ship |
-| Route_Type | Shipping route type |
-| Engine_Type | Type of engine used |
-| Maintenance_Status | Maintenance condition of the ship |
-| Weather_Condition | Weather during voyages |
+| **Categorical Features**   | **Description** |
+|--------------------------|----------------|
+| Ship_Type | Type of ship used for transport. |
+| Route_Type | Type of shipping route (e.g., Coastal, Long-haul, etc.). |
+| Engine_Type | Type of engine used in the ship. |
+| Maintenance_Status | Maintenance condition of the ship. |
+| Weather_Condition | Weather conditions during voyages. |
 
 ```{r}
 #| echo: false
