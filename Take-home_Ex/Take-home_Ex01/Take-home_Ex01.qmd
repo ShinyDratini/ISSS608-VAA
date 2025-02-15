@@ -28,7 +28,7 @@ We load the following R packages using the pacman::p_load() function:
 | [corrplot](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) | Used for correlation matrix visualisation. |
 | [car](https://www.geeksforgeeks.org/car-package-in-r/) | Companion to Applied Regression, used for statistical analysis. |
 | [plotly](https://plotly.com/) | Used to create interactive plots. |
-| [colorspace](https://cran.r-project.org/web/packages/colorspace/vignettes/colorspace.html)&nbsp; | Used in colour manipulation for visualisations. |
+| [colorspace](https://cran.r-project.org/web/packages/colorspace/vignettes/colorspace.html)  | Used in colour manipulation for visualisations. |
 
 ```{r}
 #| echo: false
@@ -92,10 +92,6 @@ Next, binning and feature engineering will be done before analysis is done.
 
 To improve trend analysis and facilitate meaningful comparisons, the dataset was binned into Month perios. This helps to identify seasonality and trends in voyages while reducing noise from daily fluctuations. A Profit column was introduced to measure voyage profitability, enabling insights into cost efficiency and revenue impact over time.
 
-<details>
-
-<summary>Click here to show the R code</summary>
-
 ```{r}
 # Create a new column for Year-Month binning
 df <- df %>%
@@ -145,6 +141,7 @@ ggplotly(p, tooltip = "text")
 ### Monthly profit heatmap by Ship Type
 
 The heatmap Viridis uses plasma which is colourblind friendly
+
 ```{r}
 #| echo: false
 # Summarize total voyages per ship type per month 
@@ -461,6 +458,18 @@ ggplot(turnaround_analysis, aes(x = Weather_Condition, y = Average_Turnaround_Ti
        x = "Weather Condition") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+Effect of Weather Conditions on Turnaround Time:
+
+Turnaround time appears to increase slightly from calm to rough weather, especially for Long-haul and Coastal routes.
+The impact of weather is relatively minor, suggesting that ships may have efficient contingency plans.
+Comparison Between Route Types:
+
+Short-haul and Transoceanic routes have consistently higher turnaround times compared to Coastal and Long-haul routes, regardless of weather conditions.
+Long-haul routes experience the highest turnaround time in rough weather, possibly due to longer distances and greater exposure to adverse conditions.
+Operational Considerations:
+
+If rough weather significantly increases turnaround time, shipping companies may need better port efficiency strategies or adjustments in scheduling.
+Coastal routes may be less affected, indicating shorter processing times at ports.
 
 ```{r}
 #| code-fold: true
@@ -490,6 +499,18 @@ ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Carg
        y = "Turnaround Time (hours)",
        color = "Cargo Weight (tons)")
 ```
+No Clear Linear Relationship Between Distance & Turnaround Time
+Across all route types, there is no strong linear correlation between distance traveled and turnaround time.
+Ships covering short and long distances seem to experience similar turnaround times, indicating that other operational factors (port efficiency, ship size, delays, weather, etc.) may contribute to turnaround time.
+2. Cargo Weight Distribution is Fairly Even
+Across all routes, cargo weight is widely distributed across different distances and turnaround times.
+Heavier cargo (darker blue points) is seen in all ranges of turnaround time and distance, suggesting that cargo weight alone does not significantly influence turnaround time.
+3. Shorter Routes Have High Variability in Turnaround Time
+Coastal & Short-haul routes (top-left & bottom-left plots) show wide spread turnaround times even for shorter distances.
+This suggests that factors other than distance, such as port congestion, waiting times, or operational delays, could be affecting turnaround time.
+4. Long-haul & Transoceanic Routes Have More Evenly Distributed Turnaround Times
+Long-haul & Transoceanic routes (top-right & bottom-right plots) show relatively balanced distributions.
+Ships covering longer distances (>1000 nm) still experience a mix of long and short turnaround times, reinforcing that turnaround time is influenced by multiple factors beyond distance traveled.
 
 ```{r}
 #| code-fold: true
@@ -522,6 +543,19 @@ df %>%
        fill = "Avg Efficiency (nm/kWh)") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+Profitability Variation Across Ship Types:
+
+Bulk Carrier appears to have more high-profit months (yellow patches), indicating higher and more stable profitability.
+Fish Carrier & Container Ship show frequent low-profit months (blue/purple patches), implying higher volatility in earnings.
+Tankers show a mix of high and low profit months, suggesting inconsistent profitability trends.
+Profit Fluctuations Over Time:
+
+October 2023 & January 2024 have notable low-profit months for Fish Carrier & Container Ship.
+Bulk Carriers & Tankers exhibit strong profitability in mid-2024, potentially indicating increased demand.
+Possible Business & Operational Considerations:
+
+The seasonal impact on profitability should be investigated—whether market demand, maintenance schedules, or seasonal regulations affect certain ship types.
+The Bulk Carrier's strong performance suggests potential investment opportunities in this category.
 
 ```{r}
 #| code-fold: true
@@ -555,6 +589,7 @@ route_types <- unique(df$Route_Type)
 plot_list <- list()
 visibility_list <- list()
 
+# ✅ Create the traces for each Route Type
 for (i in seq_along(route_types)) {
   route_data <- df %>% filter(Route_Type == route_types[i])
   
@@ -562,6 +597,7 @@ for (i in seq_along(route_types)) {
     x = jitter(route_data$Operational_Cost_USD, amount = 10000),  # ✅ Reduce overlap
     y = jitter(route_data$Revenue_per_Voyage_USD, amount = 10000),
     mode = "markers",
+    type = "scatter",  # ✅ Explicitly specify scatter type
     marker = list(size = route_data$Cargo_Weight_tons / 100,  # ✅ Reduce bubble size
                   opacity = 0.6),  # ✅ Make bubbles slightly transparent
     name = route_types[i],  # Legend name
@@ -573,28 +609,44 @@ for (i in seq_along(route_types)) {
       "<br>Profit (USD):", route_data$Profit
     ),
     hoverinfo = "text",
-    visible = ifelse(i == 1, TRUE, "legendonly")  # Show only first Route Type initially
+    visible = ifelse(i == 1, TRUE, "legendonly")  # ✅ Show only first Route Type initially
   )
-  
+}
+
+# ✅ Create "All" Option to show all Route Types
+all_visibility <- rep(TRUE, length(plot_list))  # ✅ Ensures all traces are visible when "All" is selected
+
+# ✅ Add "All" Button for Dropdown
+all_button <- list(
+  method = "update",
+  args = list(list(visible = all_visibility)),
+  label = "All"
+)
+
+# ✅ Add Individual Route Type Buttons
+for (i in seq_along(route_types)) {
   visibility_list[[i]] <- list(
     method = "update",
     args = list(list(visible = rep(FALSE, length(route_types)))),
     label = route_types[i]
   )
-  
   visibility_list[[i]]$args[[1]]$visible[i] <- TRUE
 }
 
-# Create Plotly figure with a dropdown filter
+# ✅ Add "All" option at the start of the dropdown
+visibility_list <- append(list(all_button), visibility_list)
+
+# ✅ Create Plotly Figure
 p <- plot_ly()
 
 for (plot in plot_list) {
   p <- add_trace(p, x = plot$x, y = plot$y, mode = plot$mode, 
+                 type = "scatter",  # ✅ Explicitly specify scatter type
                  marker = plot$marker, name = plot$name, 
                  text = plot$text, hoverinfo = plot$hoverinfo, visible = plot$visible)
 }
 
-# Add dropdown filter to switch Route Types
+# ✅ Add dropdown filter with "All" option
 p <- layout(p,
             title = "Operational Cost vs Revenue (Filtered by Route Type)",
             xaxis = list(title = "Operational Cost (USD)"),
@@ -610,9 +662,25 @@ p <- layout(p,
               )
             ))
 
-# Display the plot
+# ✅ Display the plot
 p
 ```
+
+Revenue Increases with Operational Cost but with High Variability
+
+While there is some correlation between operational cost and revenue, the scatter pattern suggests high variability, meaning that higher operational cost does not always lead to higher revenue.
+Overlap Among Route Types
+
+The four route types overlap significantly, meaning that no single route type has a clear advantage in terms of cost vs. revenue.
+This suggests that other factors, such as cargo type, fuel efficiency, and weather conditions, might play a bigger role in determining revenue.
+Clusters of High-Cost, High-Revenue Voyages
+
+Some bubbles are concentrated in the top-right quadrant, representing voyages with both high operational costs and high revenue.
+These voyages could correspond to high-value cargo or long-distance shipments.
+Presence of Low Revenue, High Operational Cost Voyages
+
+There are some voyages with high operational costs but relatively low revenue.
+These may represent inefficient voyages, poor cargo utilization, or increased fuel consumption due to weather or maintenance issues.
 
 ```{r}
 #| code-fold: true
@@ -626,6 +694,7 @@ route_types <- unique(df$Route_Type)
 plot_list <- list()
 visibility_list <- list()
 
+# ✅ Create the traces for each Route Type
 for (i in seq_along(route_types)) {
   route_data <- df %>% filter(Route_Type == route_types[i])
   
@@ -633,6 +702,7 @@ for (i in seq_along(route_types)) {
     x = jitter(route_data$Operational_Cost_USD, amount = 10000),  # ✅ Reduce overlap
     y = jitter(route_data$Revenue_per_Voyage_USD, amount = 10000),
     mode = "markers",
+    type = "scatter",  # ✅ Explicitly specify scatter type
     marker = list(size = route_data$Cargo_Weight_tons / 100,  # ✅ Reduce bubble size
                   opacity = 0.6),  # ✅ Make bubbles slightly transparent
     name = route_types[i],  # Legend name
@@ -644,28 +714,44 @@ for (i in seq_along(route_types)) {
       "<br>Profit (USD):", route_data$Profit
     ),
     hoverinfo = "text",
-    visible = ifelse(i == 1, TRUE, "legendonly")  # Show only first Route Type initially
+    visible = ifelse(i == 1, TRUE, "legendonly")  # ✅ Show only first Route Type initially
   )
-  
+}
+
+# ✅ Create "All" Option to show all Route Types
+all_visibility <- rep(TRUE, length(plot_list))  # ✅ Ensures all traces are visible when "All" is selected
+
+# ✅ Add "All" Button for Dropdown
+all_button <- list(
+  method = "update",
+  args = list(list(visible = all_visibility)),
+  label = "All"
+)
+
+# ✅ Add Individual Route Type Buttons
+for (i in seq_along(route_types)) {
   visibility_list[[i]] <- list(
     method = "update",
     args = list(list(visible = rep(FALSE, length(route_types)))),
     label = route_types[i]
   )
-  
   visibility_list[[i]]$args[[1]]$visible[i] <- TRUE
 }
 
-# Create Plotly figure with a dropdown filter
+# ✅ Add "All" option at the start of the dropdown
+visibility_list <- append(list(all_button), visibility_list)
+
+# ✅ Create Plotly Figure
 p <- plot_ly()
 
 for (plot in plot_list) {
   p <- add_trace(p, x = plot$x, y = plot$y, mode = plot$mode, 
+                 type = "scatter",  # ✅ Explicitly specify scatter type
                  marker = plot$marker, name = plot$name, 
                  text = plot$text, hoverinfo = plot$hoverinfo, visible = plot$visible)
 }
 
-# Add dropdown filter to switch Route Types
+# ✅ Add dropdown filter with "All" option
 p <- layout(p,
             title = "Operational Cost vs Revenue (Filtered by Route Type)",
             xaxis = list(title = "Operational Cost (USD)"),
@@ -681,7 +767,7 @@ p <- layout(p,
               )
             ))
 
-# Display the plot
+# ✅ Display the plot
 p
 ```
 
@@ -760,7 +846,9 @@ p <- layout(p,
 # ✅ Display the plot
 p
 ```
-
+This chart provides valuable insights into how operational costs impact revenue across different shipping routes and months.
+It highlights potential profitable routes, seasonal trends, and areas for operational improvement.
+Government officials and shipping companies can use this data to make better strategic decisions to improve efficiency and profitability. 🚢📊
 ```{r}
 #| code-fold: true
 #| code-summary: "Click here to show the R code"
@@ -1033,6 +1121,25 @@ ggplot(df,
   
   theme_minimal()  # Clean visualization
 ```
+🔹 Ships in Good Maintenance (Blue) Tend to Be More Profitable:
+
+Across all ship types, the blue violin plots are more skewed towards higher profits.
+This suggests that well-maintained ships generate higher and more stable profits.
+🔹 Tanker and Bulk Carrier Ships Have Higher Profit Variability:
+
+Tankers and Bulk Carriers have wider violin plots, indicating a large spread of profits.
+These ships have potential for high profits but also more variability.
+🔹 Fish Carriers Have More Loss-Making Voyages:
+
+The Fish Carrier category has several voyages with very low profits.
+Maintenance status doesn’t seem to significantly improve profitability for these ships.
+🔹 Critical Maintenance Status (Red) Results in More Loss-Making Voyages:
+
+Ships in Critical condition (Red) have a larger spread towards low profits.
+Poor maintenance is associated with lower revenue and higher operational costs.
+🔹 Container Ships Show More Consistent Profitability:
+
+The boxplots for Container Ships are relatively tighter, meaning their profits are more stable compared to other ship types.
 
 ```{r}
 #| code-fold: true
@@ -1244,7 +1351,18 @@ print(tukey_test)
 
 ### 1. Weather Condition and Route Type
 
-Turnaround time increases with worsening weather conditions (Calm → Moderate → Rough). Long-haul routes experience the longest delays in rough weather, which may impact profitability. Coastal and Transoceanic routes have similar turnaround times across all weather conditions. Conclusion: Weather conditions impact efficiency, and rough conditions can reduce profitability due to increased delays. \### 2. Distance Traveled, Cargo Weight, and Route Type No clear trend showing a direct relationship between distance traveled and turnaround time. Larger cargo weight does not necessarily lead to longer turnaround times. Conclusion: Efficient scheduling and loading processes likely help mitigate the impact of travel distance and cargo weight on turnaround time. \### 3. Ship Type and Efficiency Efficiency (nm/kWh) varies significantly across ship types and route types. Transoceanic routes show the greatest variation in efficiency, with some ship types performing much better than others. Conclusion: The choice of ship type plays a crucial role in energy efficiency and, consequently, profitability. \### 4. Profitability Distribution Across Ship Types Different ship types show varying profitability distributions, with some ship types being more profitable on average. Maintenance status plays a role in profitability, with "Good" maintenance status correlating with higher profit levels. Conclusion: Preventive maintenance and proper upkeep can significantly enhance profitability across different ship types.
+Turnaround time increases with worsening weather conditions (Calm → Moderate → Rough). Long-haul routes experience the longest delays in rough weather, which may impact profitability. Coastal and Transoceanic routes have similar turnaround times across all weather conditions. Conclusion: Weather conditions impact efficiency, and rough conditions can reduce profitability due to increased delays. 
+### 2. Distance Traveled, Cargo Weight, and Route Type 
+
+No clear trend showing a direct relationship between distance traveled and turnaround time. Larger cargo weight does not necessarily lead to longer turnaround times. Conclusion: Efficient scheduling and loading processes likely help mitigate the impact of travel distance and cargo weight on turnaround time. 
+
+### 3. Ship Type and Efficiency Efficiency (nm/kWh) varies significantly across ship types and route types.
+
+Transoceanic routes show the greatest variation in efficiency, with some ship types performing much better than others. Conclusion: The choice of ship type plays a crucial role in energy efficiency and, consequently, profitability. 
+
+### 4. Profitability Distribution Across Ship Types Different ship types show varying profitability distributions, with some ship types being more profitable on average. 
+
+Maintenance status plays a role in profitability, with "Good" maintenance status correlating with higher profit levels. Conclusion: Preventive maintenance and proper upkeep can significantly enhance profitability across different ship types.
 
 Route Type & Weather: Routes affected by rough weather have longer turnaround times, impacting operational costs. Distance & Cargo Weight: Distance traveled and cargo weight do not significantly impact turnaround time, indicating efficient operations. Ship Type & Efficiency: Certain ship types are significantly more efficient, and using the most efficient ships on specific routes can increase profitability. Maintenance & Profitability: Well-maintained ships consistently yield higher profitability, emphasizing the importance of scheduled maintenance. Overall, optimizing ship maintenance, selecting the right ship type for each route, and managing turnaround times in challenging weather conditions can improve profitability.
 
