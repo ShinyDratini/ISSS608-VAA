@@ -9,29 +9,28 @@ date-modified: "last-modified"
 
 ## Setting the Scene
 
-#### The Gulf of Guinea is a region rich in natural resources. It holds significant reserves of gas and oil as well as other valuable minerals. It is an important shipping zone transporting oil, gas and other commodities to and from central and southern Africa. It is also a hotspot for piracy. In 2020, there are 78 piracy incidents and 130 seafarers kidnapped for ransom.
+The Gulf of Guinea is a region rich in natural resources. It holds significant reserves of gas and oil as well as other valuable minerals. It is an important shipping zone transporting oil, gas and other commodities to and from central and southern Africa. It is also a hotspot for piracy. In 2020, there were 78 piracy incidents and 130 seafarers kidnapped for ransom.
 
 ## Task
 
-### This study is conducted to find the corelation between the type of ships and and the revenue they bring in in the Gulf of Guinea. This will allow government officals to better strategize on how to improve security in the region.
+This study is conducted to find the correlation between the type of ships and and the revenue they bring in in the Gulf of Guinea. This will allow government officials to better strategize on how to improve ship performance in the region.
 
 # Getting Started
 
 ## Load the packages
 
-### We load the following R packages using the pacman::p_load() function:
+We load the following R packages using the pacman::p_load() function:
 
-### tidyverse: (ggthemes, tidymodels, lubridate, knitr, dplyr) A collection of packages designed for data science in R.
+| Library   | Description |
+|-----------|------------|
+| [tidyverse](https://www.tidyverse.org/) | A collection of packages designed for data science in R. (ggthemes, tidymodels, lubridate, knitr, dplyr) |
+| [ggplot2](https://ggplot2.tidyverse.org/) | Extensions such as ggHoriPlot, ggstatsplot, ggridges, ggdist |
+| [corrplot](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) | Used for correlation matrix visualisation. |
+| [car](https://www.geeksforgeeks.org/car-package-in-r/) | Companion to Applied Regression, used for statistical analysis. |
+| [plotly](https://plotly.com/) | Used to create interactive plots. |
+| [colorspace](https://cran.r-project.org/web/packages/colorspace/vignettes/colorspace.html)&nbsp; | Used in colour manipulation for visualisations. |
 
-### ggplot2: (Extensions such as ggHoriPlot, ggstatsplot, ggridges, ggdist)
 
-### corrplot: Used for correlation matrix visualisation.
-
-### car: Companion to Applied Regression, used for statistical analysis.
-
-### plotly: Used to create interactive plots.
-
-### colorspace: Used in colour manipulation for visualisations.
 
 ```{r}
 #| echo: false
@@ -43,38 +42,31 @@ pacman::p_load(readr, viridis, SmartEDA, tidyverse, tidymodels, lubridate,
 
 ## Data Source and Data Importing
 
-#### Ship performance clustering dataset was used. The dataset is tailored for maritime data analytics. This dataset contains 2736 rows and 24 columns with feature categorized into numerical and categorical types.
+Ship performance clustering dataset from  [Kaggle](https://www.kaggle.com/datasets/jeleeladekunlefijabi/ship-performance-clustering-dataset) was used. The dataset is tailored for maritime data analytics. This dataset contains 2736 rows and 24 columns with feature categorized into numerical and categorical types.
 
-#### First we read the CSV file with proper column type specification
+First we read the CSV file with proper column type specification
 
-### Numerical Features:
+| Numerical Features   | Description |
+|-----------|------------|
 
-#### Speed_Over_Ground_Knots: Average speed of the ship over water (in knots).
+| Speed_Over_Ground_Knots | Average speed of the ship over water (in knots). |
+| Engine_Power_kW | Engine power output (in Kilowatts). |
+| Distance_Traveled_nm | The total distance travelled by the ship (in nautical miles). |
+| Operational_Cost_USD | Total operational cost per voyage (in USD). |
+| Revenue_per_Voyagae_USD | Revenue generated per voyage (in USD). |
+| Efficiency_nm_per_kWh | Energy efficiency calculated in nautical miles per kilowatt-hour. |
 
-#### Engine_Power_kW: Engine power output (in Kilowatts).
+| Categorical Features   | Description |
+|-----------|------------|
 
-#### Distance_Traveled_nm: The total distance travelled by the ship (in nautical miles).
-
-#### Operational_Cost_USD: Total operational cost per voyage (in USD).
-
-#### Revenue_per_Voyagae_USD: Revenue generated per voyage (in USD).
-
-#### Efficiency_nm_per_kWh: Energy efficiency calculated in nautical miles per kilowatt-hour.
-
-### Categorical Features:
-
-#### Ship_Type: Type of ship
-
-#### Route_Type: Shipping route type
-
-#### Engine_Type: Type of engine used
-
-#### Maintenance_Status: Maintenance condition of the ship
-
-#### Weather_Condition: Weather during voyages
+| Ship_Type | Type of ship |
+| Route_Type | Shipping route type |
+| Engine_Type | Type of engine used |
+| Maintenance_Status | Maintenance condition of the ship |
+| Weather_Condition | Weather during voyages |
 
 ```{r}
-#|echo: FALSE
+#| echo: false
 # Read CSV file with proper column type specification
 df <- read_csv("data/Ship_Performance_Dataset.csv", col_types = cols(Date = col_date(format = "%Y-%m-%d")))
 
@@ -84,7 +76,7 @@ str(df)
 
 ## Data Pre-processing
 
-#### First, from the summary statistics of the dataset, it is observed that there are missing values 'none' in the dataset.
+First, from the summary statistics of the dataset, it is observed that there are missing values 'none' in the dataset.
 
 ```{r}
 #|echo: FALSE 
@@ -98,13 +90,14 @@ dim(df)
 df %>% summarise_all(n_distinct)
 ```
 
-#### Since the total missing values is \<5% of total rows, removing them will not significantly impact the dataset.
+Since the total missing values is \<5% of total rows, removing them will not significantly impact the dataset.
 
 <details>
 
 <summary>Click here to show the R code</summary>
 
-```{r, echo=TRUE}
+```{r}
+#| echo: false
 # Remove rows where any non-Date column contains "None"
 df <- df[!apply(df[, !names(df) %in% "Date"], 1, function(row) any(row == "None")), ]
 ```
@@ -117,7 +110,8 @@ df <- df[!apply(df[, !names(df) %in% "Date"], 1, function(row) any(row == "None"
 
 <summary>Click here to show the R code</summary>
 
-```{r, echo=TRUE}
+```{r}
+#| echo: false
 # Create a new column for Year-Month binning
 df <- df %>%
   mutate(Month = floor_date(Date, "month")) %>%  # Truncate date to the first day of the month
@@ -131,6 +125,10 @@ str(df)
 # Visualization & Analysis
 
 ### Monthly Profit by Ship Type
+
+<details>
+
+<summary>Click here to show the R code</summary>
 
 ```{r}
 # Create the ggplot object
@@ -147,7 +145,11 @@ ggplotly(p, tooltip = "text")
 
 ### Monthly profit heatmap by Ship Type
 
-#### The heatmap Viridis uses plasma which is colourblind friendly
+The heatmap Viridis uses plasma which is colourblind friendly
+
+<details>
+
+<summary>Click here to show the R code</summary>
 
 ```{r}
 # Summarize total voyages per ship type per month 
@@ -174,6 +176,10 @@ p <- ggplot(df_summary, aes(x = Month, y = Ship_Type, fill = Profit,
 ggplotly(p, tooltip = "text")
 ```
 
+<details>
+
+<summary>Click here to show the R code</summary>
+
 ```{r}
 # Scatter plot with regression line
 ggplot(df, aes(x = Cargo_Weight_tons, y = Profit, color = Ship_Type)) +
@@ -184,6 +190,10 @@ ggplot(df, aes(x = Cargo_Weight_tons, y = Profit, color = Ship_Type)) +
        x = "Cargo Weight (tons)", y = "Profit (USD)", color = "Ship Type") +
   theme_minimal()
 ```
+
+<details>
+
+<summary>Click here to show the R code</summary>
 
 ```{r}
 # Select only numerical columns for correlation
@@ -203,6 +213,10 @@ print(sorted_cor)
 ### From the Correlation Matrix, we can observe that none of the numerical variables have strong linear relationships with revenue.
 
 ## Profitability Analysis
+
+<details>
+
+<summary>Click here to show the R code</summary>
 
 ```{r}
 df_new <- df %>%
@@ -237,6 +251,9 @@ print(profit_by_route_type)
 
 ### Plotting the Profitability Analysis
 
+<details>
+
+<summary>Click here to show the R code</summary>
 ```{r}
 df_new <- df %>%
   mutate(Profit_per_Voyage_USD = Revenue_per_Voyage_USD - Operational_Cost_USD)
@@ -268,6 +285,9 @@ ggplotly(p, tooltip = "text")
 
 ### Ridgeline Plot
 
+<details>
+
+<summary>Click here to show the R code</summary>
 ```{r}
 ggplot(df_new, aes(x = Profit_per_Voyage_USD, y = Ship_Type, fill = Route_Type)) +
   geom_density_ridges(alpha = 0.7) +
@@ -280,6 +300,9 @@ ggplot(df_new, aes(x = Profit_per_Voyage_USD, y = Ship_Type, fill = Route_Type))
 
 ## Turnaround Analysis
 
+<details>
+
+<summary>Click here to show the R code</summary>
 ```{r}
 turnaround_analysis <- df %>%
   group_by(Weather_Condition, Route_Type) %>%
@@ -290,6 +313,9 @@ turnaround_analysis <- df %>%
 print(turnaround_analysis)
 ```
 
+<details>
+
+<summary>Click here to show the R code</summary>
 ```{r}
 # Visualize Turnaround Time
 # Bar plot to show Average Turnaround Time by Weather_Condition and Route_Type
@@ -302,6 +328,9 @@ ggplot(turnaround_analysis, aes(x = Weather_Condition, y = Average_Turnaround_Ti
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+<details>
+
+<summary>Click here to show the R code</summary>
 ```{r}
 # Analyze Turnaround Time by Route_Type, Cargo_Weight_tons, and Distance_Traveled_nm
 ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Cargo_Weight_tons)) +
@@ -314,6 +343,9 @@ ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Carg
        color = "Cargo Weight (tons)")
 ```
 
+<details>
+
+<summary>Click here to show the R code</summary>
 ```{r}
 df %>%
   group_by(Ship_Type, Route_Type) %>%
@@ -333,6 +365,9 @@ df %>%
 
 ### Interactive Plots
 
+<details>
+
+<summary>Click here to show the R code</summary>
 ```{r}
 # Convert the 'Date' column to Date type if not already
 df$Date <- as.Date(df$Date)
@@ -389,7 +424,9 @@ bp <- plot_ly(
 # Display the plot
 bp
 ```
+<details>
 
+<summary>Click here to show the R code</summary>
 ```{r}
 bp <- plot_ly(
   data = df,
@@ -426,7 +463,9 @@ bp <- plot_ly(
 bp
 ```
 
+<details>
 
+<summary>Click here to show the R code</summary>
 ```{r}
 summary_data <- df %>%
   group_by(Ship_Type, Route_Type, Engine_Type, Maintenance_Status, Date) %>%
@@ -478,7 +517,9 @@ bp <- plot_ly(
 bp
 ```
 
+<details>
 
+<summary>Click here to show the R code</summary>
 
 ```{r}
 
@@ -520,6 +561,9 @@ interactive_plot
 
 ### Profit Trends by Ship Type
 
+<details>
+
+<summary>Click here to show the R code</summary>
 ```{r}
 df %>%
   filter(Date >= "2018-01-01") %>%
@@ -547,7 +591,9 @@ df %>%
 ```
 
 ## Statistical Testing (ANOVA)
+<details>
 
+<summary>Click here to show the R code</summary>
 ```{r}
 # Run ANOVA for each Ship Type & Engine Type
 anova_results <- list()
@@ -577,11 +623,11 @@ anova_results
 
 ### Container Ship - Steam Turbine
 
-#### p-value: 0.00146 (Significant at 0.01 level) Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). You can explore which maintenance levels contribute to the difference using post-hoc tests (e.g., Tukey HSD).
+p-value: 0.00146 (Significant at 0.01 level) Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). You can explore which maintenance levels contribute to the difference using post-hoc tests (e.g., Tukey HSD).
 
 ### Bulk Carrier - Heavy Fuel Oil (HFO)
 
-#### p-value: 0.00383 (Significant at 0.01 level) Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). Again, post-hoc tests like Tukey HSD can be run to identify which maintenance statuses differ.
+p-value: 0.00383 (Significant at 0.01 level) Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). Again, post-hoc tests like Tukey HSD can be run to identify which maintenance statuses differ.
 
 <details>
 

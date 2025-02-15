@@ -14,15 +14,15 @@ knitr::include_graphics("image_with_text.png")
 
 This section provides an overview of the coursework.
 
-### Hands-on Exercises
+### [Hands-on Exercises](Hands-on_Ex01.html)
 
 Details about the hands-on exercises can go here.
 
-### In-Class Exercises
+### [In-Class Exercises](In-Class_Ex04.html)
 
 Details about the In-Class exercises can go here.
 
-### Take-Home Exercises
+### [Take-Home Exercises](Take-home_Ex01.html)
 
 Details about the Take-Home exercises can go here.
 
