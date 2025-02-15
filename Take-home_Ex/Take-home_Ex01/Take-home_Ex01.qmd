@@ -140,62 +140,6 @@ ggplotly(p, tooltip = "text")
 
 ### Monthly profit heatmap by Ship Type
 
-The heatmap Viridis uses plasma which is colourblind friendly
-
-```{r}
-#| echo: false
-# Summarize total voyages per ship type per month 
-df_summary <- df %>%
-  group_by(Month, Ship_Type) %>%
-  summarise(Profit = sum(Profit, na.rm = TRUE), 
-            Total_Voyages = sum(Weekly_Voyage_Count, na.rm = TRUE),
-            .groups = "drop")  # Suppress grouped output warning
-
-# Create the heatmap with tooltip details
-p <- ggplot(df_summary, aes(x = Month, y = Ship_Type, fill = Profit, 
-                    text = paste("Ship Type:", Ship_Type, 
-                                 "<br>Month:", Month, 
-                                 "<br>Profit (USD):", round(Profit, 2), 
-                                 "<br>Total Voyages:", Total_Voyages))) +  
-  geom_tile() +
-  scale_fill_viridis_c(option = "plasma") +  
-  labs(title = "Monthly Profit Heatmap by Ship Type",
-       x = "Month", y = "Ship Type", fill = "Profit (USD)") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-# Convert to interactive plot
-ggplotly(p, tooltip = "text")
-```
-
-```{r}
-#| code-fold: true
-#| code-summary: "Click here to show the R code"
-#| eval: false
-# Summarize total voyages per ship type per month 
-df_summary <- df %>%
-  group_by(Month, Ship_Type) %>%
-  summarise(Profit = sum(Profit, na.rm = TRUE), 
-            Total_Voyages = sum(Weekly_Voyage_Count, na.rm = TRUE),
-            .groups = "drop")  # Suppress grouped output warning
-
-# Create the heatmap with tooltip details
-p <- ggplot(df_summary, aes(x = Month, y = Ship_Type, fill = Profit, 
-                    text = paste("Ship Type:", Ship_Type, 
-                                 "<br>Month:", Month, 
-                                 "<br>Profit (USD):", round(Profit, 2), 
-                                 "<br>Total Voyages:", Total_Voyages))) +  
-  geom_tile() +
-  scale_fill_viridis_c(option = "plasma") +  
-  labs(title = "Monthly Profit Heatmap by Ship Type",
-       x = "Month", y = "Ship Type", fill = "Profit (USD)") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-# Convert to interactive plot
-ggplotly(p, tooltip = "text")
-```
-
 ```{r}
 #| echo: false
 # Scatter plot with regression line
@@ -485,47 +429,6 @@ ggplot(turnaround_analysis, aes(x = Weather_Condition, y = Average_Turnaround_Ti
        y = "Average Turnaround Time (hours)",
        x = "Weather Condition") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-```{r}
-#| echo: false
-# Analyze Turnaround Time by Route_Type, Cargo_Weight_tons, and Distance_Traveled_nm
-ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Cargo_Weight_tons)) +
-  geom_point(alpha = 0.7) +
-  facet_wrap(~ Route_Type) +
-  theme_minimal() +
-  labs(title = "Turnaround Time by Route Type, Cargo Weight, and Distance Traveled",
-       x = "Distance Traveled (nm)",
-       y = "Turnaround Time (hours)",
-       color = "Cargo Weight (tons)")
-```
-No Clear Linear Relationship Between Distance & Turnaround Time
-Across all route types, there is no strong linear correlation between distance traveled and turnaround time.
-Ships covering short and long distances seem to experience similar turnaround times, indicating that other operational factors (port efficiency, ship size, delays, weather, etc.) may contribute to turnaround time.
-2. Cargo Weight Distribution is Fairly Even
-Across all routes, cargo weight is widely distributed across different distances and turnaround times.
-Heavier cargo (darker blue points) is seen in all ranges of turnaround time and distance, suggesting that cargo weight alone does not significantly influence turnaround time.
-3. Shorter Routes Have High Variability in Turnaround Time
-Coastal & Short-haul routes (top-left & bottom-left plots) show wide spread turnaround times even for shorter distances.
-This suggests that factors other than distance, such as port congestion, waiting times, or operational delays, could be affecting turnaround time.
-4. Long-haul & Transoceanic Routes Have More Evenly Distributed Turnaround Times
-Long-haul & Transoceanic routes (top-right & bottom-right plots) show relatively balanced distributions.
-Ships covering longer distances (>1000 nm) still experience a mix of long and short turnaround times, reinforcing that turnaround time is influenced by multiple factors beyond distance traveled.
-
-```{r}
-#| code-fold: true
-#| code-summary: "Click here to show the R code"
-#| eval: false
-
-# Analyze Turnaround Time by Route_Type, Cargo_Weight_tons, and Distance_Traveled_nm
-ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Cargo_Weight_tons)) +
-  geom_point(alpha = 0.7) +
-  facet_wrap(~ Route_Type) +
-  theme_minimal() +
-  labs(title = "Turnaround Time by Route Type, Cargo Weight, and Distance Traveled",
-       x = "Distance Traveled (nm)",
-       y = "Turnaround Time (hours)",
-       color = "Cargo Weight (tons)")
 ```
 
 ```{r}
