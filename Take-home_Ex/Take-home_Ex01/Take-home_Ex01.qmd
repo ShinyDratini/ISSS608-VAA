@@ -9,11 +9,11 @@ date-modified: "last-modified"
 
 ## Setting the Scene
 
-The Gulf of Guinea is a region rich in natural resources. It holds significant reserves of gas and oil as well as other valuable minerals. It is an important shipping zone transporting oil, gas and other commodities to and from central and southern Africa. It is also a hotspot for piracy. In 2020, there were 78 piracy incidents and 130 seafarers kidnapped for ransom.
+The Gulf of Guinea is a region abundant in natural resources, including oil, gas, and valuable minerals. It serves as a crucial shipping corridor, facilitating the transportation of commodities to and from Central and Southern Africa. However, it is also one of the world’s most dangerous maritime regions, plagued by piracy and security threats. In 2020, there were 78 piracy incidents, with 130 seafarers kidnapped for ransom, making it a key concern for global trade and maritime security.
 
 ## Task
 
-This study is conducted to find the correlation between the type of ships and and the revenue they bring in in the Gulf of Guinea. This will allow government officials to better strategize on how to improve ship performance in the region.
+This study aims to analyze the correlation between various factors affecting ship performance and revenue generation in the Gulf of Guinea. By identifying key influences on operational efficiency and profitability, the findings will help government officials and maritime stakeholders develop strategies to enhance ship performance, mitigate risks, and optimize trade efficiency in the region.
 
 # Getting Started
 
@@ -79,22 +79,12 @@ str(df)
 First, from the summary statistics of the dataset, it is observed that there are missing values 'none' in the dataset.
 
 ```{r}
-#|echo: FALSE 
+#| echo: false
 # Summary statistics of the dataset
 summary(df)
-
-# Check dimensions (rows, columns)
-dim(df)
-
-# Count unique values in a single column
-df %>% summarise_all(n_distinct)
 ```
 
 Since the total missing values is \<5% of total rows, removing them will not significantly impact the dataset.
-
-<details>
-
-<summary>Click here to show the R code</summary>
 
 ```{r}
 #| echo: false
@@ -102,16 +92,15 @@ Since the total missing values is \<5% of total rows, removing them will not sig
 df <- df[!apply(df[, !names(df) %in% "Date"], 1, function(row) any(row == "None")), ]
 ```
 
-#### Next, binning and feature engineering will be done before analysis is done.
+Next, binning and feature engineering will be done before analysis is done.
 
-#### To improve trend analysis and facilitate meaningful comparisons, the dataset was binned into Month perios. This helps to identify seasonality and trends in voyages while reducing noise from daily fluctuations. A Profit column was introduced to measure voyage profitability, enabling insights into cost efficiency and revenue impact over time.
+To improve trend analysis and facilitate meaningful comparisons, the dataset was binned into Month perios. This helps to identify seasonality and trends in voyages while reducing noise from daily fluctuations. A Profit column was introduced to measure voyage profitability, enabling insights into cost efficiency and revenue impact over time.
 
 <details>
 
 <summary>Click here to show the R code</summary>
 
 ```{r}
-#| echo: false
 # Create a new column for Year-Month binning
 df <- df %>%
   mutate(Month = floor_date(Date, "month")) %>%  # Truncate date to the first day of the month
@@ -119,6 +108,7 @@ df <- df %>%
 ```
 
 ```{r}
+#| echo: false
 str(df)
 ```
 
@@ -251,10 +241,42 @@ print(profit_by_route_type)
 
 ### Plotting the Profitability Analysis
 
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
+#| echo: false
+
+df_new <- df %>%
+  mutate(Profit_per_Voyage_USD = Revenue_per_Voyage_USD - Operational_Cost_USD)
+
+# Analyze Profit by Ship_Type, Engine_Type, and Route_Type
+profit_analysis <- df_new %>%
+  group_by(Ship_Type, Engine_Type, Route_Type) %>%
+  summarise(Average_Profit = mean(Profit_per_Voyage_USD),
+            Total_Profit = sum(Profit_per_Voyage_USD),
+            Count = n(), .groups = 'drop')
+
+# Create ggplot with interactive tooltips
+p <- ggplot(profit_analysis, aes(x = Ship_Type, y = Average_Profit, fill = Engine_Type,
+                                 text = paste("Ship Type:", Ship_Type,
+                                              "<br>Engine Type:", Engine_Type,
+                                              "<br>Route Type:", Route_Type,
+                                              "<br>Avg Profit (USD):", round(Average_Profit, 2)))) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  facet_wrap(~ Route_Type) +
+  theme_minimal() +
+  labs(title = "Average Profit by Ship Type, Engine Type, and Route Type",
+       y = "Average Profit (USD)",
+       x = "Ship Type") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Convert ggplot to an interactive plot
+ggplotly(p, tooltip = "text")
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
 df_new <- df %>%
   mutate(Profit_per_Voyage_USD = Revenue_per_Voyage_USD - Operational_Cost_USD)
 
@@ -285,10 +307,22 @@ ggplotly(p, tooltip = "text")
 
 ### Ridgeline Plot
 
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
+#| echo: false
+ggplot(df_new, aes(x = Profit_per_Voyage_USD, y = Ship_Type, fill = Route_Type)) +
+  geom_density_ridges(alpha = 0.7) +
+  labs(title = "Ridgeline Plot: Profit Distribution by Ship Type and Route",
+       x = "Profit per Voyage (USD)", 
+       y = "Ship Type",
+       fill = "Route Type") +
+  theme_minimal()
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
 ggplot(df_new, aes(x = Profit_per_Voyage_USD, y = Ship_Type, fill = Route_Type)) +
   geom_density_ridges(alpha = 0.7) +
   labs(title = "Ridgeline Plot: Profit Distribution by Ship Type and Route",
@@ -300,10 +334,8 @@ ggplot(df_new, aes(x = Profit_per_Voyage_USD, y = Ship_Type, fill = Route_Type))
 
 ## Turnaround Analysis
 
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
+#| echo: false
 turnaround_analysis <- df %>%
   group_by(Weather_Condition, Route_Type) %>%
   summarise(Average_Turnaround_Time = mean(Turnaround_Time_hours),
@@ -313,10 +345,22 @@ turnaround_analysis <- df %>%
 print(turnaround_analysis)
 ```
 
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
+turnaround_analysis <- df %>%
+  group_by(Weather_Condition, Route_Type) %>%
+  summarise(Average_Turnaround_Time = mean(Turnaround_Time_hours),
+            Count = n(), .groups = 'drop')
+
+# Display results
+print(turnaround_analysis)
+```
+
+```{r}
+#| echo: false
 # Visualize Turnaround Time
 # Bar plot to show Average Turnaround Time by Weather_Condition and Route_Type
 ggplot(turnaround_analysis, aes(x = Weather_Condition, y = Average_Turnaround_Time, fill = Route_Type)) +
@@ -328,10 +372,25 @@ ggplot(turnaround_analysis, aes(x = Weather_Condition, y = Average_Turnaround_Ti
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
+# Visualize Turnaround Time
+# Bar plot to show Average Turnaround Time by Weather_Condition and Route_Type
+ggplot(turnaround_analysis, aes(x = Weather_Condition, y = Average_Turnaround_Time, fill = Route_Type)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  theme_minimal() +
+  labs(title = "Average Turnaround Time by Weather Condition and Route Type",
+       y = "Average Turnaround Time (hours)",
+       x = "Weather Condition") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+```{r}
+#| echo: false
 # Analyze Turnaround Time by Route_Type, Cargo_Weight_tons, and Distance_Traveled_nm
 ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Cargo_Weight_tons)) +
   geom_point(alpha = 0.7) +
@@ -343,10 +402,44 @@ ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Carg
        color = "Cargo Weight (tons)")
 ```
 
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
+# Analyze Turnaround Time by Route_Type, Cargo_Weight_tons, and Distance_Traveled_nm
+ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Cargo_Weight_tons)) +
+  geom_point(alpha = 0.7) +
+  facet_wrap(~ Route_Type) +
+  theme_minimal() +
+  labs(title = "Turnaround Time by Route Type, Cargo Weight, and Distance Traveled",
+       x = "Distance Traveled (nm)",
+       y = "Turnaround Time (hours)",
+       color = "Cargo Weight (tons)")
+```
+
+
+```{r}
+#| echo: false
+df %>%
+  group_by(Ship_Type, Route_Type) %>%
+  summarise(Avg_Efficiency = mean(Efficiency_nm_per_kWh, na.rm = TRUE), .groups = "drop") %>%
+  ggplot(aes(x = Ship_Type, y = Route_Type, fill = Avg_Efficiency)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "plasma") +  # Enhances color visibility
+  theme_minimal() +
+  labs(title = "Heatmap of Average Efficiency by Ship Type and Route Type",
+       x = "Ship Type",
+       y = "Route Type",
+       fill = "Avg Efficiency (nm/kWh)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
 df %>%
   group_by(Ship_Type, Route_Type) %>%
   summarise(Avg_Efficiency = mean(Efficiency_nm_per_kWh, na.rm = TRUE), .groups = "drop") %>%
@@ -365,236 +458,575 @@ df %>%
 
 ### Interactive Plots
 
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
-# Convert the 'Date' column to Date type if not already
-df$Date <- as.Date(df$Date)
+#| echo: false
+# Get unique Route Types
+route_types <- unique(df$Route_Type)
 
-# Summarize the data by unique combinations of Ship_Type, Route_Type, Engine_Type, and Maintenance_Status
-summary_data <- df %>%
-  group_by(Ship_Type, Route_Type, Engine_Type, Maintenance_Status, Date) %>%
-  summarise(
-    Total_Operational_Cost = sum(Operational_Cost_USD, na.rm = TRUE),
-    Total_Revenue = sum(Revenue_per_Voyage_USD, na.rm = TRUE),
-    Profit = sum(Revenue_per_Voyage_USD, na.rm = TRUE) - sum(Operational_Cost_USD, na.rm = TRUE),
-    .groups = "drop"  # ✅ Removes unnecessary grouping
-  ) 
+# Create a scatter plot for each Route Type but set them hidden by default
+plot_list <- list()
+visibility_list <- list()
 
-# Convert Date to character to avoid animation errors
-summary_data$Date <- as.character(summary_data$Date)
-
-# Fix size scaling
-size_range <- range(summary_data$Total_Operational_Cost, na.rm = TRUE)
-size_scaled <- scales::rescale(summary_data$Total_Operational_Cost, to = c(5, 50)) # Ensure reasonable size scaling
-
-# Create an interactive plot with plotly and add a slider for the date range
-bp <- plot_ly(
-  data = summary_data,
-  x = ~Total_Operational_Cost, 
-  y = ~Total_Revenue, 
-  size = ~size_scaled,  # ✅ Use scaled size to prevent extreme bubbles
-  color = ~Maintenance_Status,  # ✅ Keep categorical color mapping
-  frame = ~Date,  # ✅ Ensure Date is character type
-  text = ~paste("Ship Type:", Ship_Type,
-                "<br>Route Type:", Route_Type,
-                "<br>Engine Type:", Engine_Type,
-                "<br>Maintenance Status:", Maintenance_Status,
-                "<br>Date:", Date,
-                "<br>Profit (USD):", Profit),
-  hoverinfo = "text",  # ✅ Display text when hovering over points
-  type = 'scatter', 
-  mode = 'markers'  # ✅ Ensure no unintended line elements
-) %>%
-  layout(
-    title = "Operational Cost vs Revenue per Voyage",
-    xaxis = list(title = "Total Operational Cost (USD)"),
-    yaxis = list(title = "Total Revenue per Voyage (USD)"),
-    showlegend = TRUE
-  ) %>%
-  animation_opts(
-    frame = 100, 
-    redraw = TRUE
-  ) %>%
-  animation_slider(
-    currentvalue = list(prefix = "Date: ")
+for (i in seq_along(route_types)) {
+  route_data <- df %>% filter(Route_Type == route_types[i])
+  
+  plot_list[[i]] <- list(
+    x = jitter(route_data$Operational_Cost_USD, amount = 10000),  # ✅ Reduce overlap
+    y = jitter(route_data$Revenue_per_Voyage_USD, amount = 10000),
+    mode = "markers",
+    marker = list(size = route_data$Cargo_Weight_tons / 100,  # ✅ Reduce bubble size
+                  opacity = 0.6),  # ✅ Make bubbles slightly transparent
+    name = route_types[i],  # Legend name
+    text = paste(
+      "Ship Type:", route_data$Ship_Type,
+      "<br>Engine Type:", route_data$Engine_Type,
+      "<br>Maintenance Status:", route_data$Maintenance_Status,
+      "<br>Cargo Weight (tons):", route_data$Cargo_Weight_tons,
+      "<br>Profit (USD):", route_data$Profit
+    ),
+    hoverinfo = "text",
+    visible = ifelse(i == 1, TRUE, "legendonly")  # Show only first Route Type initially
   )
+  
+  visibility_list[[i]] <- list(
+    method = "update",
+    args = list(list(visible = rep(FALSE, length(route_types)))),
+    label = route_types[i]
+  )
+  
+  visibility_list[[i]]$args[[1]]$visible[i] <- TRUE
+}
+
+# Create Plotly figure with a dropdown filter
+p <- plot_ly()
+
+for (plot in plot_list) {
+  p <- add_trace(p, x = plot$x, y = plot$y, mode = plot$mode, 
+                 marker = plot$marker, name = plot$name, 
+                 text = plot$text, hoverinfo = plot$hoverinfo, visible = plot$visible)
+}
+
+# Add dropdown filter to switch Route Types
+p <- layout(p,
+            title = "Operational Cost vs Revenue (Filtered by Route Type)",
+            xaxis = list(title = "Operational Cost (USD)"),
+            yaxis = list(title = "Revenue per Voyage (USD)"),
+            showlegend = TRUE,
+            updatemenus = list(
+              list(
+                buttons = visibility_list,
+                direction = "down",
+                showactive = TRUE,
+                x = 0.15,  # Position of dropdown
+                y = 1.15
+              )
+            ))
 
 # Display the plot
-bp
-```
-<details>
-
-<summary>Click here to show the R code</summary>
-```{r}
-bp <- plot_ly(
-  data = df,
-  x = ~Efficiency_nm_per_kWh,  # ✅ Efficiency instead of Cost
-  y = ~Profit,  # ✅ Profitability instead of Revenue
-  size = ~Cargo_Weight_tons,  # ✅ Bubble size based on cargo weight
-  color = ~Ship_Type,  # ✅ Color-coded by Ship Type
-  frame = ~Date,  
-  text = ~paste("Ship Type:", Ship_Type,
-                "<br>Route Type:", Route_Type,
-                "<br>Engine Type:", Engine_Type,
-                "<br>Efficiency:", round(Efficiency_nm_per_kWh, 2),
-                "<br>Profit (USD):", scales::comma(Profit)),
-  hoverinfo = "text",
-  type = 'scatter', 
-  mode = 'markers',
-  marker = list(line = list(width = 0))
-) %>%
-  layout(
-    title = "Ship Efficiency vs Profitability",
-    xaxis = list(title = "Efficiency (nm per kWh)"),
-    yaxis = list(title = "Profit (USD)"),
-    showlegend = TRUE
-  ) %>%
-  animation_opts(
-    frame = 100, 
-    redraw = TRUE
-  ) %>%
-  animation_slider(
-    currentvalue = list(prefix = "Date: ")
-  )
-
-# Display the plot
-bp
+p
 ```
 
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
-summary_data <- df %>%
-  group_by(Ship_Type, Route_Type, Engine_Type, Maintenance_Status, Date) %>%
-  summarise(
-    Total_Operational_Cost = sum(Operational_Cost_USD, na.rm = TRUE),
-    Total_Revenue = sum(Revenue_per_Voyage_USD, na.rm = TRUE),
-    Profit = sum(Revenue_per_Voyage_USD, na.rm = TRUE) - sum(Operational_Cost_USD, na.rm = TRUE),
-    Profit_Margin_Percentage = (Profit / Total_Revenue) * 100,  # ✅ Compute Profit Margin
-    Average_Load_Percentage = mean(Average_Load_Percentage, na.rm = TRUE),  # ✅ Aggregate properly
-    Turnaround_Time = mean(Turnaround_Time_hours, na.rm = TRUE),
-    .groups = "drop"
-  )
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
 
-# Check output
-print(summary_data)
+# Get unique Route Types
+route_types <- unique(df$Route_Type)
 
-bp <- plot_ly(
-  data = summary_data,
-  x = ~Average_Load_Percentage,  # ✅ How full the ship is
-  y = ~Profit_Margin_Percentage,  # ✅ How much profit per revenue
-  size = ~Turnaround_Time,  # ✅ Bubble size based on turnaround time
-  color = ~Route_Type,  # ✅ Color-coded by Route Type
-  frame = ~Date,  
-  text = ~paste("Ship Type:", Ship_Type,
-                "<br>Route Type:", Route_Type,
-                "<br>Load Factor (%):", Average_Load_Percentage,
-                "<br>Profit Margin (%):", round(Profit_Margin_Percentage, 2),
-                "<br>Turnaround Time (days):", Turnaround_Time),
-  hoverinfo = "text",
-  type = 'scatter', 
-  mode = 'markers',
-  marker = list(line = list(width = 0))
-) %>%
-  layout(
-    title = "Load Factor vs Profit Margin",
-    xaxis = list(title = "Average Load Percentage (%)"),
-    yaxis = list(title = "Profit Margin (%)"),
-    showlegend = TRUE
-  ) %>%
-  animation_opts(
-    frame = 100, 
-    redraw = TRUE
-  ) %>%
-  animation_slider(
-    currentvalue = list(prefix = "Date: ")
+# Create a scatter plot for each Route Type but set them hidden by default
+plot_list <- list()
+visibility_list <- list()
+
+for (i in seq_along(route_types)) {
+  route_data <- df %>% filter(Route_Type == route_types[i])
+  
+  plot_list[[i]] <- list(
+    x = jitter(route_data$Operational_Cost_USD, amount = 10000),  # ✅ Reduce overlap
+    y = jitter(route_data$Revenue_per_Voyage_USD, amount = 10000),
+    mode = "markers",
+    marker = list(size = route_data$Cargo_Weight_tons / 100,  # ✅ Reduce bubble size
+                  opacity = 0.6),  # ✅ Make bubbles slightly transparent
+    name = route_types[i],  # Legend name
+    text = paste(
+      "Ship Type:", route_data$Ship_Type,
+      "<br>Engine Type:", route_data$Engine_Type,
+      "<br>Maintenance Status:", route_data$Maintenance_Status,
+      "<br>Cargo Weight (tons):", route_data$Cargo_Weight_tons,
+      "<br>Profit (USD):", route_data$Profit
+    ),
+    hoverinfo = "text",
+    visible = ifelse(i == 1, TRUE, "legendonly")  # Show only first Route Type initially
   )
+  
+  visibility_list[[i]] <- list(
+    method = "update",
+    args = list(list(visible = rep(FALSE, length(route_types)))),
+    label = route_types[i]
+  )
+  
+  visibility_list[[i]]$args[[1]]$visible[i] <- TRUE
+}
+
+# Create Plotly figure with a dropdown filter
+p <- plot_ly()
+
+for (plot in plot_list) {
+  p <- add_trace(p, x = plot$x, y = plot$y, mode = plot$mode, 
+                 marker = plot$marker, name = plot$name, 
+                 text = plot$text, hoverinfo = plot$hoverinfo, visible = plot$visible)
+}
+
+# Add dropdown filter to switch Route Types
+p <- layout(p,
+            title = "Operational Cost vs Revenue (Filtered by Route Type)",
+            xaxis = list(title = "Operational Cost (USD)"),
+            yaxis = list(title = "Revenue per Voyage (USD)"),
+            showlegend = TRUE,
+            updatemenus = list(
+              list(
+                buttons = visibility_list,
+                direction = "down",
+                showactive = TRUE,
+                x = 0.15,  # Position of dropdown
+                y = 1.15
+              )
+            ))
 
 # Display the plot
-bp
-```
-
-<details>
-
-<summary>Click here to show the R code</summary>
-
-```{r}
-
-# Summarize the data by unique combinations of Ship_Type, Route_Type, Engine_Type, and Maintenance_Status
-summary_data <- df %>%
-  group_by(Ship_Type, Route_Type, Engine_Type, Maintenance_Status) %>%
-  summarise(
-    Total_Operational_Cost = sum(Operational_Cost_USD, na.rm = TRUE),
-    Total_Revenue = sum(Revenue_per_Voyage_USD, na.rm = TRUE)
-  )
-
-# Check if the summarization gives you 144 rows (should be the case)
-nrow(summary_data)
-
-# Create an interactive scatter plot with plotly
-interactive_plot <- plot_ly(summary_data, 
-                            x = ~Total_Operational_Cost, 
-                            y = ~Total_Revenue, 
-                            color = ~Ship_Type, 
-                            size = ~Total_Operational_Cost, 
-                            type = 'scatter', 
-                            mode = 'markers', 
-                            text = ~paste("Ship Type:", Ship_Type,
-                                          "<br>Route Type:", Route_Type,
-                                          "<br>Engine Type:", Engine_Type,
-                                          "<br>Maintenance Status:", Maintenance_Status)) %>%
-  layout(
-    title = "Operational Cost vs Revenue per Voyage",
-    xaxis = list(title = "Total Operational Cost (USD)"),
-    yaxis = list(title = "Total Revenue per Voyage (USD)"),
-    showlegend = TRUE
-  )
-
-# Display the plot
-interactive_plot
+p
 ```
 
 ## Time-Series Analysis
 
-### Profit Trends by Ship Type
-
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
-df %>%
-  filter(Date >= "2018-01-01") %>%
-  ggplot() +
-  geom_horizon(aes(x = Date, y = Profit), 
-               origin = "midpoint", 
-               horizonscale = 6) +
-  facet_grid(Ship_Type~.) +
-  theme_few() +
-  scale_fill_hcl(palette = 'RdBu') +
-  labs(title = "Profit Trends by Ship Type (Jan 2018 to Present)",
-       x = "Date", y = "Profit (USD)") +
-  theme(
-    panel.spacing.y = unit(0, "lines"), 
-    strip.text.y = element_text(size = 5, angle = 0, hjust = 0),
-    legend.position = 'none',
-    axis.text.y = element_blank(),
-    axis.text.x = element_text(size = 7),
-    axis.title.y = element_blank(),
-    axis.title.x = element_blank(),
-    axis.ticks.y = element_blank(),
-    panel.border = element_blank()
-  ) +
-  scale_x_date(expand=c(0,0), date_breaks = "3 month", date_labels = "%b%y")
+#| echo: false
+# Compute Monthly Aggregation (Sum) by Route Type
+df_monthly <- df %>%
+  mutate(Month = floor_date(Date, "month")) %>%  # ✅ Extract month
+  group_by(Route_Type, Month) %>%
+  summarise(
+    Total_Operational_Cost = sum(Operational_Cost_USD, na.rm = TRUE),
+    Total_Revenue = sum(Revenue_per_Voyage_USD, na.rm = TRUE),
+    Total_Profit = sum(Revenue_per_Voyage_USD, na.rm = TRUE) - sum(Operational_Cost_USD, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(Month)  # ✅ Ensure months are sorted correctly
+
+# Get unique Route Types & Months
+route_types <- unique(df_monthly$Route_Type)
+month_list <- unique(df_monthly$Month)
+
+# Initialize storage for traces
+plot_list <- list()
+
+# ✅ Create a scatter plot for each Route Type & Month (All visible)
+for (i in seq_along(route_types)) {
+  for (j in seq_along(month_list)) {
+    
+    route_month_data <- df_monthly %>% 
+      filter(Route_Type == route_types[i], Month == month_list[j])
+    
+    if (nrow(route_month_data) > 0) {
+      trace <- list(
+        x = jitter(route_month_data$Total_Operational_Cost, amount = 50000),  # ✅ Reduce clustering
+        y = jitter(route_month_data$Total_Revenue, amount = 50000),
+        mode = "markers",
+        type = "scatter",  # ✅ Explicitly specify scatter type
+        marker = list(size = route_month_data$Total_Profit / 1000000, opacity = 0.7),  # ✅ Scaled size & transparency
+        name = paste(route_types[i], format(month_list[j], "%B %Y")),  # ✅ Improve legend readability
+        text = paste(
+          "Route Type:", route_types[i],
+          "<br>Month:", format(route_month_data$Month, "%B %Y"),
+          "<br>Total Operational Cost: $", formatC(route_month_data$Total_Operational_Cost, big.mark = ","),
+          "<br>Total Revenue: $", formatC(route_month_data$Total_Revenue, big.mark = ","),
+          "<br>Total Profit: $", formatC(route_month_data$Total_Profit, big.mark = ",")
+        ),
+        hoverinfo = "text",
+        visible = TRUE  # ✅ Show all by default
+      )
+      
+      plot_list[[length(plot_list) + 1]] <- trace
+    }
+  }
+}
+
+# ✅ Create Plotly figure (No dropdowns, uses legend instead)
+p <- plot_ly()
+
+for (plot in plot_list) {
+  p <- add_trace(p, x = plot$x, y = plot$y, mode = plot$mode, 
+                 type = "scatter",
+                 marker = plot$marker, name = plot$name, 
+                 text = plot$text, hoverinfo = plot$hoverinfo, visible = plot$visible)
+}
+
+# ✅ Improved Layout
+p <- layout(p,
+            title = "Total Monthly Operational Cost vs Revenue",
+            xaxis = list(title = "Total Operational Cost (USD)"),
+            yaxis = list(title = "Total Revenue (USD)"),
+            showlegend = TRUE  # ✅ Users can toggle visibility via the legend
+)
+
+# ✅ Display the plot
+p
 ```
 
-## Statistical Testing (ANOVA)
-<details>
-
-<summary>Click here to show the R code</summary>
 ```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
+# Compute Monthly Aggregation (Sum) by Route Type
+df_monthly <- df %>%
+  mutate(Month = floor_date(Date, "month")) %>%  # ✅ Extract month
+  group_by(Route_Type, Month) %>%
+  summarise(
+    Total_Operational_Cost = sum(Operational_Cost_USD, na.rm = TRUE),
+    Total_Revenue = sum(Revenue_per_Voyage_USD, na.rm = TRUE),
+    Total_Profit = sum(Revenue_per_Voyage_USD, na.rm = TRUE) - sum(Operational_Cost_USD, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(Month)  # ✅ Ensure months are sorted correctly
+
+# Get unique Route Types & Months
+route_types <- unique(df_monthly$Route_Type)
+month_list <- unique(df_monthly$Month)
+
+# Initialize storage for traces
+plot_list <- list()
+
+# ✅ Create a scatter plot for each Route Type & Month (All visible)
+for (i in seq_along(route_types)) {
+  for (j in seq_along(month_list)) {
+    
+    route_month_data <- df_monthly %>% 
+      filter(Route_Type == route_types[i], Month == month_list[j])
+    
+    if (nrow(route_month_data) > 0) {
+      trace <- list(
+        x = jitter(route_month_data$Total_Operational_Cost, amount = 50000),  # ✅ Reduce clustering
+        y = jitter(route_month_data$Total_Revenue, amount = 50000),
+        mode = "markers",
+        type = "scatter",  # ✅ Explicitly specify scatter type
+        marker = list(size = route_month_data$Total_Profit / 1000000, opacity = 0.7),  # ✅ Scaled size & transparency
+        name = paste(route_types[i], format(month_list[j], "%B %Y")),  # ✅ Improve legend readability
+        text = paste(
+          "Route Type:", route_types[i],
+          "<br>Month:", format(route_month_data$Month, "%B %Y"),
+          "<br>Total Operational Cost: $", formatC(route_month_data$Total_Operational_Cost, big.mark = ","),
+          "<br>Total Revenue: $", formatC(route_month_data$Total_Revenue, big.mark = ","),
+          "<br>Total Profit: $", formatC(route_month_data$Total_Profit, big.mark = ",")
+        ),
+        hoverinfo = "text",
+        visible = TRUE  # ✅ Show all by default
+      )
+      
+      plot_list[[length(plot_list) + 1]] <- trace
+    }
+  }
+}
+
+# ✅ Create Plotly figure (No dropdowns, uses legend instead)
+p <- plot_ly()
+
+for (plot in plot_list) {
+  p <- add_trace(p, x = plot$x, y = plot$y, mode = plot$mode, 
+                 type = "scatter",
+                 marker = plot$marker, name = plot$name, 
+                 text = plot$text, hoverinfo = plot$hoverinfo, visible = plot$visible)
+}
+
+# ✅ Improved Layout
+p <- layout(p,
+            title = "Total Monthly Operational Cost vs Revenue",
+            xaxis = list(title = "Total Operational Cost (USD)"),
+            yaxis = list(title = "Total Revenue (USD)"),
+            showlegend = TRUE  # ✅ Users can toggle visibility via the legend
+)
+
+# ✅ Display the plot
+p
+```
+
+
+```{r}
+#| echo: false
+# Summarize the data with averages
+summary_data <- df %>%
+  group_by(Date, Maintenance_Status) %>%
+  summarise(
+    Avg_Operational_Cost = mean(Operational_Cost_USD, na.rm = TRUE),
+    Avg_Revenue = mean(Revenue_per_Voyage_USD, na.rm = TRUE),
+    Avg_Profit = mean(Profit, na.rm = TRUE),
+    .groups = "drop"
+  ) 
+
+# Convert Date to character for animation
+summary_data$Date <- as.character(summary_data$Date)
+
+# Scale sizes
+size_scaled <- scales::rescale(summary_data$Avg_Operational_Cost, to = c(5, 50))
+
+# **Fix: Ensure Maintenance_Status is not required in breakeven_data**
+breakeven_data <- data.frame(
+  x = c(min(summary_data$Avg_Operational_Cost, na.rm = TRUE), max(summary_data$Avg_Operational_Cost, na.rm = TRUE)),
+  y = c(min(summary_data$Avg_Operational_Cost, na.rm = TRUE), max(summary_data$Avg_Operational_Cost, na.rm = TRUE))
+)
+
+# Create animated scatter plot
+bp <- plot_ly(
+  data = summary_data,
+  x = ~Avg_Operational_Cost, 
+  y = ~Avg_Revenue, 
+  size = ~size_scaled,  
+  color = ~Maintenance_Status,  # ✅ Keep this only in animated points
+  frame = ~Date,  
+  text = ~paste("Date:", Date,
+                "<br>Maintenance Status:", Maintenance_Status,
+                "<br>Avg Profit (USD):", Avg_Profit),
+  hoverinfo = "text",
+  type = 'scatter', 
+  mode = 'markers'
+) %>%
+
+  # **Fix: Add breakeven line separately (no Maintenance_Status)**
+  add_trace(
+    data = breakeven_data,
+    x = ~x, 
+    y = ~y, 
+    type = 'scatter',
+    mode = 'lines',
+    line = list(color = 'black', dash = 'dot'),
+    name = 'Breakeven Line',
+    inherit = FALSE  # ✅ Ensure no missing column issues
+  ) %>%
+
+  # Layout settings
+  layout(
+    title = "Average Operational Cost vs Revenue per Voyage (with Breakeven Line)",
+    xaxis = list(title = "Average Operational Cost (USD)"),
+    yaxis = list(title = "Average Revenue per Voyage (USD)"),
+    showlegend = TRUE
+  ) %>%
+
+  # Slow down animation
+  animation_opts(
+    frame = 300,  # Slower animation
+    easing = "linear",
+    redraw = TRUE
+  ) %>%
+
+  # Animation slider settings
+  animation_slider(
+    currentvalue = list(prefix = "Date: ")
+  )
+
+# Display the plot
+bp
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
+# Summarize the data with averages
+summary_data <- df %>%
+  group_by(Date, Maintenance_Status) %>%
+  summarise(
+    Avg_Operational_Cost = mean(Operational_Cost_USD, na.rm = TRUE),
+    Avg_Revenue = mean(Revenue_per_Voyage_USD, na.rm = TRUE),
+    Avg_Profit = mean(Profit, na.rm = TRUE),
+    .groups = "drop"
+  ) 
+
+# Convert Date to character for animation
+summary_data$Date <- as.character(summary_data$Date)
+
+# Scale sizes
+size_scaled <- scales::rescale(summary_data$Avg_Operational_Cost, to = c(5, 50))
+
+# **Fix: Ensure Maintenance_Status is not required in breakeven_data**
+breakeven_data <- data.frame(
+  x = c(min(summary_data$Avg_Operational_Cost, na.rm = TRUE), max(summary_data$Avg_Operational_Cost, na.rm = TRUE)),
+  y = c(min(summary_data$Avg_Operational_Cost, na.rm = TRUE), max(summary_data$Avg_Operational_Cost, na.rm = TRUE))
+)
+
+# Create animated scatter plot
+bp <- plot_ly(
+  data = summary_data,
+  x = ~Avg_Operational_Cost, 
+  y = ~Avg_Revenue, 
+  size = ~size_scaled,  
+  color = ~Maintenance_Status,  # ✅ Keep this only in animated points
+  frame = ~Date,  
+  text = ~paste("Date:", Date,
+                "<br>Maintenance Status:", Maintenance_Status,
+                "<br>Avg Profit (USD):", Avg_Profit),
+  hoverinfo = "text",
+  type = 'scatter', 
+  mode = 'markers'
+) %>%
+
+  # **Fix: Add breakeven line separately (no Maintenance_Status)**
+  add_trace(
+    data = breakeven_data,
+    x = ~x, 
+    y = ~y, 
+    type = 'scatter',
+    mode = 'lines',
+    line = list(color = 'black', dash = 'dot'),
+    name = 'Breakeven Line',
+    inherit = FALSE  # ✅ Ensure no missing column issues
+  ) %>%
+
+  # Layout settings
+  layout(
+    title = "Average Operational Cost vs Revenue per Voyage (with Breakeven Line)",
+    xaxis = list(title = "Average Operational Cost (USD)"),
+    yaxis = list(title = "Average Revenue per Voyage (USD)"),
+    showlegend = TRUE
+  ) %>%
+
+  # Slow down animation
+  animation_opts(
+    frame = 300,  # Slower animation
+    easing = "linear",
+    redraw = TRUE
+  ) %>%
+
+  # Animation slider settings
+  animation_slider(
+    currentvalue = list(prefix = "Date: ")
+  )
+
+# Display the plot
+bp
+```
+
+
+## Profitability Distribution Across Ship Types
+```{r}
+#| echo: false
+# Flip the axes
+ggplot(df, 
+       aes(x = Ship_Type, 
+           y = Profit, 
+           fill = Maintenance_Status)) +
+  
+  # Half-eye density plot (horizontal)
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA,
+               alpha = 0.6) +
+  
+  # Boxplot (horizontal)
+  geom_boxplot(width = 0.2, 
+               outlier.shape = NA,
+               alpha = 0.8) +
+  
+  # Dot plot (horizontal)
+  stat_dots(side = "left",
+            justification = 1.2,
+            binwidth = NA,  
+            overflow = "compress",
+            dotsize = 0.6) +  
+  
+  # Flip coordinates to make it horizontal
+  coord_flip() +
+  
+  # Titles and theme
+  labs(title = "Profitability Distribution Across Ship Types",
+       x = "Ship Type", 
+       y = "Profit per Voyage (USD)",
+       fill = "Maintenance Status") +
+  
+  theme_minimal()  # Clean visualization
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
+# Flip the axes
+ggplot(df, 
+       aes(x = Ship_Type, 
+           y = Profit, 
+           fill = Maintenance_Status)) +
+  
+  # Half-eye density plot (horizontal)
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA,
+               alpha = 0.6) +
+  
+  # Boxplot (horizontal)
+  geom_boxplot(width = 0.2, 
+               outlier.shape = NA,
+               alpha = 0.8) +
+  
+  # Dot plot (horizontal)
+  stat_dots(side = "left",
+            justification = 1.2,
+            binwidth = NA,  
+            overflow = "compress",
+            dotsize = 0.6) +  
+  
+  # Flip coordinates to make it horizontal
+  coord_flip() +
+  
+  # Titles and theme
+  labs(title = "Profitability Distribution Across Ship Types",
+       x = "Ship Type", 
+       y = "Profit per Voyage (USD)",
+       fill = "Maintenance Status") +
+  
+  theme_minimal()  # Clean visualization
+```
+
+
+
+## Statistical Testing (ANOVA)
+
+```{r}
+#| echo: false
+
+# Run ANOVA for each Ship Type & Engine Type
+anova_results <- list()
+
+for (ship in unique(df$Ship_Type)) {
+  for (engine in unique(df$Engine_Type)) {
+    
+    # Subset the data
+    subset_data <- df %>%
+      filter(Ship_Type == ship, Engine_Type == engine)
+    
+    # Ensure there are at least 2 unique Maintenance Status levels
+    if (length(unique(subset_data$Maintenance_Status)) > 1) {
+      
+      # Run ANOVA
+      anova_model <- aov(Operational_Cost_USD ~ Maintenance_Status, data = subset_data)
+      
+      # Store results
+      anova_results[[paste(ship, engine, sep = " - ")]] <- summary(anova_model)
+    }
+  }
+}
+
+# Print results
+anova_results
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
 # Run ANOVA for each Ship Type & Engine Type
 anova_results <- list()
 
@@ -629,11 +1061,9 @@ p-value: 0.00146 (Significant at 0.01 level) Interpretation: There is a signific
 
 p-value: 0.00383 (Significant at 0.01 level) Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). Again, post-hoc tests like Tukey HSD can be run to identify which maintenance statuses differ.
 
-<details>
-
-<summary>▶ Show the code</summary>
-
 ```{r}
+#| echo: false
+
 # Filter the dataset for Bulk Carrier and Heavy Fuel Oil (HFO)
 container_ship_steamturbine_data <- subset(df, Ship_Type == "Container Ship" & Engine_Type == "Steam Turbine")
 
@@ -647,7 +1077,23 @@ tukey_test <- TukeyHSD(anova_model_hfo)
 print(tukey_test)
 ```
 
-<details>
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
+# Filter the dataset for Bulk Carrier and Heavy Fuel Oil (HFO)
+container_ship_steamturbine_data <- subset(df, Ship_Type == "Container Ship" & Engine_Type == "Steam Turbine")
+
+# Run ANOVA for Operational Cost by Maintenance Status
+anova_model_hfo <- aov(Operational_Cost_USD ~ Maintenance_Status, data = container_ship_steamturbine_data)
+
+# Run the Tukey HSD test
+tukey_test <- TukeyHSD(anova_model_hfo)
+
+# Print the results of the Tukey test
+print(tukey_test)
+```
 
 ::: callout-tip
 #### Tukey HSD test results for the Container Ship (Steam Turbine) above:
@@ -661,11 +1107,9 @@ print(tukey_test)
 ✅ Summary: ✅ The Good vs. Critical comparison is statistically significant, indicating that the maintenance status between "Good" and "Critical" has a significant effect on operational costs. The Fair vs. Critical and Good vs. Fair comparisons are not statistically significant, suggesting that there is no significant difference in operational costs between these groups for Container Ship - Steam Turbine.
 :::
 
-<details>
-
-<summary>▶ Show the code</summary>
-
 ```{r}
+#| echo: false
+
 # Filter the dataset for Bulk Carrier and Heavy Fuel Oil (HFO)
 bulk_carrier_hfo_data <- subset(df, Ship_Type == "Bulk Carrier" & Engine_Type == "Heavy Fuel Oil (HFO)")
 
@@ -679,7 +1123,23 @@ tukey_test <- TukeyHSD(anova_model_hfo)
 print(tukey_test)
 ```
 
-<details>
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
+# Filter the dataset for Bulk Carrier and Heavy Fuel Oil (HFO)
+bulk_carrier_hfo_data <- subset(df, Ship_Type == "Bulk Carrier" & Engine_Type == "Heavy Fuel Oil (HFO)")
+
+# Run ANOVA for Operational Cost by Maintenance Status
+anova_model_hfo <- aov(Operational_Cost_USD ~ Maintenance_Status, data = bulk_carrier_hfo_data)
+
+# Run the Tukey HSD test
+tukey_test <- TukeyHSD(anova_model_hfo)
+
+# Print the results of the Tukey test
+print(tukey_test)
+```
 
 ::: callout-tip
 #### Tukey HSD test results for the Bulk Carrier (HFO) above:
@@ -694,6 +1154,31 @@ print(tukey_test)
 :::
 
 # Summary and Conclusion
+
+## Profitability Analysis Across Different Variables
+### 1. Weather Condition and Route Type
+Turnaround time increases with worsening weather conditions (Calm → Moderate → Rough).
+Long-haul routes experience the longest delays in rough weather, which may impact profitability.
+Coastal and Transoceanic routes have similar turnaround times across all weather conditions.
+Conclusion: Weather conditions impact efficiency, and rough conditions can reduce profitability due to increased delays.
+### 2. Distance Traveled, Cargo Weight, and Route Type
+No clear trend showing a direct relationship between distance traveled and turnaround time.
+Larger cargo weight does not necessarily lead to longer turnaround times.
+Conclusion: Efficient scheduling and loading processes likely help mitigate the impact of travel distance and cargo weight on turnaround time.
+### 3. Ship Type and Efficiency
+Efficiency (nm/kWh) varies significantly across ship types and route types.
+Transoceanic routes show the greatest variation in efficiency, with some ship types performing much better than others.
+Conclusion: The choice of ship type plays a crucial role in energy efficiency and, consequently, profitability.
+### 4. Profitability Distribution Across Ship Types
+Different ship types show varying profitability distributions, with some ship types being more profitable on average.
+Maintenance status plays a role in profitability, with "Good" maintenance status correlating with higher profit levels.
+Conclusion: Preventive maintenance and proper upkeep can significantly enhance profitability across different ship types.
+
+Route Type & Weather: Routes affected by rough weather have longer turnaround times, impacting operational costs.
+Distance & Cargo Weight: Distance traveled and cargo weight do not significantly impact turnaround time, indicating efficient operations.
+Ship Type & Efficiency: Certain ship types are significantly more efficient, and using the most efficient ships on specific routes can increase profitability.
+Maintenance & Profitability: Well-maintained ships consistently yield higher profitability, emphasizing the importance of scheduled maintenance.
+Overall, optimizing ship maintenance, selecting the right ship type for each route, and managing turnaround times in challenging weather conditions can improve profitability.
 
 # References
 
