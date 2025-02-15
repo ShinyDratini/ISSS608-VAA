@@ -207,7 +207,7 @@
     "href": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#load-the-packages",
     "title": "Take-home Exercise 1: Ship Performance in the Gulf of Guinea",
     "section": "Load the packages",
-    "text": "Load the packages\nWe load the following R packages using the pacman::p_load() function:\n\n\n\nLibrary\nDescription\n\n\n\n\ntidyverse\nA collection of packages designed for data science in R. (ggthemes, tidymodels, lubridate, knitr, dplyr)\n\n\nggplot2\nExtensions such as ggHoriPlot, ggstatsplot, ggridges, ggdist\n\n\ncorrplot\nUsed for correlation matrix visualisation.\n\n\ncar\nCompanion to Applied Regression, used for statistical analysis.\n\n\nplotly\nUsed to create interactive plots.\n\n\ncolorspace\nUsed in colour manipulation for visualisations."
+    "text": "Load the packages\nWe load the following R packages using the pacman::p_load() function:\n\n\n\nLibrary\nDescription\n\n\n\n\ntidyverse\nA collection of packages designed for data science in R. (ggthemes, tidymodels, lubridate, knitr, dplyr)\n\n\nggplot2\nExtensions such as ggHoriPlot, ggstatsplot, ggridges, ggdist\n\n\ncorrplot\nUsed for correlation matrix visualisation.\n\n\ncar\nCompanion to Applied Regression, used for statistical analysis.\n\n\nplotly\nUsed to create interactive plots.\n\n\ncolorspace \nUsed in colour manipulation for visualisations."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex01/Take-home_Ex01.html#data-source-and-data-importing",

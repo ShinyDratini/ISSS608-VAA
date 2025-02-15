@@ -21,16 +21,14 @@ This study aims to analyze the correlation between various factors affecting shi
 
 We load the following R packages using the pacman::p_load() function:
 
-| **Library**   | **Description** |
-|-----------|------------|
+| Library | Description |
+|-----------------------------------|-------------------------------------|
 | [tidyverse](https://www.tidyverse.org/) | A collection of packages designed for data science in R. (ggthemes, tidymodels, lubridate, knitr, dplyr) |
 | [ggplot2](https://ggplot2.tidyverse.org/) | Extensions such as ggHoriPlot, ggstatsplot, ggridges, ggdist |
 | [corrplot](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) | Used for correlation matrix visualisation. |
 | [car](https://www.geeksforgeeks.org/car-package-in-r/) | Companion to Applied Regression, used for statistical analysis. |
 | [plotly](https://plotly.com/) | Used to create interactive plots. |
-| [colorspace](https://cran.r-project.org/web/packages/colorspace/vignettes/colorspace.html) | Used in colour manipulation for visualisations. |
-
-
+| [colorspace](https://cran.r-project.org/web/packages/colorspace/vignettes/colorspace.html)  | Used in colour manipulation for visualisations. |
 
 ```{r}
 #| echo: false
@@ -42,12 +40,12 @@ pacman::p_load(readr, viridis, SmartEDA, tidyverse, tidymodels, lubridate,
 
 ## Data Source and Data Importing
 
-Ship performance clustering dataset from  [Kaggle](https://www.kaggle.com/datasets/jeleeladekunlefijabi/ship-performance-clustering-dataset) was used. The dataset is tailored for maritime data analytics. This dataset contains 2736 rows and 24 columns with feature categorized into numerical and categorical types.
+Ship performance clustering dataset from [Kaggle](https://www.kaggle.com/datasets/jeleeladekunlefijabi/ship-performance-clustering-dataset) was used. The dataset is tailored for maritime data analytics. This dataset contains 2736 rows and 24 columns with feature categorized into numerical and categorical types.
 
 First we read the CSV file with proper column type specification
 
-| **Numerical Features**   | **Description** |
-|-------------------------|----------------|
+| Numerical Features | Description |
+|-------------------------------------------|-----------------------------|
 | Speed_Over_Ground_Knots | Average speed of the ship over water (in knots). |
 | Engine_Power_kW | Engine power output (in Kilowatts). |
 | Distance_Traveled_nm | The total distance travelled by the ship (in nautical miles). |
@@ -55,8 +53,8 @@ First we read the CSV file with proper column type specification
 | Revenue_per_Voyage_USD | Revenue generated per voyage (in USD). |
 | Efficiency_nm_per_kWh | Energy efficiency calculated in nautical miles per kilowatt-hour. |
 
-| **Categorical Features**   | **Description** |
-|--------------------------|----------------|
+| Categorical Features | Description |
+|---------------------------------------------|---------------------------|
 | Ship_Type | Type of ship used for transport. |
 | Route_Type | Type of shipping route (e.g., Coastal, Long-haul, etc.). |
 | Engine_Type | Type of engine used in the ship. |
@@ -386,7 +384,6 @@ ggplot(turnaround_analysis, aes(x = Weather_Condition, y = Average_Turnaround_Ti
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-
 ```{r}
 #| echo: false
 # Analyze Turnaround Time by Route_Type, Cargo_Weight_tons, and Distance_Traveled_nm
@@ -415,7 +412,6 @@ ggplot(df, aes(x = Distance_Traveled_nm, y = Turnaround_Time_hours, color = Carg
        y = "Turnaround Time (hours)",
        color = "Cargo Weight (tons)")
 ```
-
 
 ```{r}
 #| echo: false
@@ -748,7 +744,6 @@ p <- layout(p,
 p
 ```
 
-
 ```{r}
 #| echo: false
 # Summarize the data with averages
@@ -903,9 +898,9 @@ bp <- plot_ly(
 # Display the plot
 bp
 ```
-
 
 ## Profitability Distribution Across Ship Types
+
 ```{r}
 #| echo: false
 # Flip the axes
@@ -986,8 +981,6 @@ ggplot(df,
   
   theme_minimal()  # Clean visualization
 ```
-
-
 
 ## Statistical Testing (ANOVA)
 
@@ -1154,29 +1147,12 @@ print(tukey_test)
 # Summary and Conclusion
 
 ## Profitability Analysis Across Different Variables
-### 1. Weather Condition and Route Type
-Turnaround time increases with worsening weather conditions (Calm → Moderate → Rough).
-Long-haul routes experience the longest delays in rough weather, which may impact profitability.
-Coastal and Transoceanic routes have similar turnaround times across all weather conditions.
-Conclusion: Weather conditions impact efficiency, and rough conditions can reduce profitability due to increased delays.
-### 2. Distance Traveled, Cargo Weight, and Route Type
-No clear trend showing a direct relationship between distance traveled and turnaround time.
-Larger cargo weight does not necessarily lead to longer turnaround times.
-Conclusion: Efficient scheduling and loading processes likely help mitigate the impact of travel distance and cargo weight on turnaround time.
-### 3. Ship Type and Efficiency
-Efficiency (nm/kWh) varies significantly across ship types and route types.
-Transoceanic routes show the greatest variation in efficiency, with some ship types performing much better than others.
-Conclusion: The choice of ship type plays a crucial role in energy efficiency and, consequently, profitability.
-### 4. Profitability Distribution Across Ship Types
-Different ship types show varying profitability distributions, with some ship types being more profitable on average.
-Maintenance status plays a role in profitability, with "Good" maintenance status correlating with higher profit levels.
-Conclusion: Preventive maintenance and proper upkeep can significantly enhance profitability across different ship types.
 
-Route Type & Weather: Routes affected by rough weather have longer turnaround times, impacting operational costs.
-Distance & Cargo Weight: Distance traveled and cargo weight do not significantly impact turnaround time, indicating efficient operations.
-Ship Type & Efficiency: Certain ship types are significantly more efficient, and using the most efficient ships on specific routes can increase profitability.
-Maintenance & Profitability: Well-maintained ships consistently yield higher profitability, emphasizing the importance of scheduled maintenance.
-Overall, optimizing ship maintenance, selecting the right ship type for each route, and managing turnaround times in challenging weather conditions can improve profitability.
+### 1. Weather Condition and Route Type
+
+Turnaround time increases with worsening weather conditions (Calm → Moderate → Rough). Long-haul routes experience the longest delays in rough weather, which may impact profitability. Coastal and Transoceanic routes have similar turnaround times across all weather conditions. Conclusion: Weather conditions impact efficiency, and rough conditions can reduce profitability due to increased delays. \### 2. Distance Traveled, Cargo Weight, and Route Type No clear trend showing a direct relationship between distance traveled and turnaround time. Larger cargo weight does not necessarily lead to longer turnaround times. Conclusion: Efficient scheduling and loading processes likely help mitigate the impact of travel distance and cargo weight on turnaround time. \### 3. Ship Type and Efficiency Efficiency (nm/kWh) varies significantly across ship types and route types. Transoceanic routes show the greatest variation in efficiency, with some ship types performing much better than others. Conclusion: The choice of ship type plays a crucial role in energy efficiency and, consequently, profitability. \### 4. Profitability Distribution Across Ship Types Different ship types show varying profitability distributions, with some ship types being more profitable on average. Maintenance status plays a role in profitability, with "Good" maintenance status correlating with higher profit levels. Conclusion: Preventive maintenance and proper upkeep can significantly enhance profitability across different ship types.
+
+Route Type & Weather: Routes affected by rough weather have longer turnaround times, impacting operational costs. Distance & Cargo Weight: Distance traveled and cargo weight do not significantly impact turnaround time, indicating efficient operations. Ship Type & Efficiency: Certain ship types are significantly more efficient, and using the most efficient ships on specific routes can increase profitability. Maintenance & Profitability: Well-maintained ships consistently yield higher profitability, emphasizing the importance of scheduled maintenance. Overall, optimizing ship maintenance, selecting the right ship type for each route, and managing turnaround times in challenging weather conditions can improve profitability.
 
 # References
 
