@@ -28,7 +28,7 @@ We load the following R packages using the pacman::p_load() function:
 | [corrplot](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) | Used for correlation matrix visualisation. |
 | [car](https://www.geeksforgeeks.org/car-package-in-r/) | Companion to Applied Regression, used for statistical analysis. |
 | [plotly](https://plotly.com/) | Used to create interactive plots. |
-| [colorspace](https://cran.r-project.org/web/packages/colorspace/vignettes/colorspace.html)  | Used in colour manipulation for visualisations. |
+| [colorspace](https://cran.r-project.org/web/packages/colorspace/vignettes/colorspace.html)&nbsp; | Used in colour manipulation for visualisations. |
 
 ```{r}
 #| echo: false
