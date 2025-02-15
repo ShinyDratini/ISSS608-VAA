@@ -112,11 +112,24 @@ str(df)
 
 ### Monthly Profit by Ship Type
 
-<details>
+```{r}
+#| echo: false
+# Create the ggplot object
+p <- ggplot(df, aes(x = Month, y = Profit, fill = Ship_Type, text = paste("Ship Type:", Ship_Type, "<br>Profit:", Profit))) +
+  geom_bar(stat = "identity", position = "stack") +  
+  labs(title = "Monthly Profit by Ship Type",
+       x = "Month", y = "Profit (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-<summary>Click here to show the R code</summary>
+# Convert to interactive plot
+ggplotly(p, tooltip = "text")
+```
 
 ```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
 # Create the ggplot object
 p <- ggplot(df, aes(x = Month, y = Profit, fill = Ship_Type, text = paste("Ship Type:", Ship_Type, "<br>Profit:", Profit))) +
   geom_bar(stat = "identity", position = "stack") +  
@@ -132,12 +145,8 @@ ggplotly(p, tooltip = "text")
 ### Monthly profit heatmap by Ship Type
 
 The heatmap Viridis uses plasma which is colourblind friendly
-
-<details>
-
-<summary>Click here to show the R code</summary>
-
 ```{r}
+#| echo: false
 # Summarize total voyages per ship type per month 
 df_summary <- df %>%
   group_by(Month, Ship_Type) %>%
@@ -162,11 +171,36 @@ p <- ggplot(df_summary, aes(x = Month, y = Ship_Type, fill = Profit,
 ggplotly(p, tooltip = "text")
 ```
 
-<details>
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+# Summarize total voyages per ship type per month 
+df_summary <- df %>%
+  group_by(Month, Ship_Type) %>%
+  summarise(Profit = sum(Profit, na.rm = TRUE), 
+            Total_Voyages = sum(Weekly_Voyage_Count, na.rm = TRUE),
+            .groups = "drop")  # Suppress grouped output warning
 
-<summary>Click here to show the R code</summary>
+# Create the heatmap with tooltip details
+p <- ggplot(df_summary, aes(x = Month, y = Ship_Type, fill = Profit, 
+                    text = paste("Ship Type:", Ship_Type, 
+                                 "<br>Month:", Month, 
+                                 "<br>Profit (USD):", round(Profit, 2), 
+                                 "<br>Total Voyages:", Total_Voyages))) +  
+  geom_tile() +
+  scale_fill_viridis_c(option = "plasma") +  
+  labs(title = "Monthly Profit Heatmap by Ship Type",
+       x = "Month", y = "Ship Type", fill = "Profit (USD)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Convert to interactive plot
+ggplotly(p, tooltip = "text")
+```
 
 ```{r}
+#| echo: false
 # Scatter plot with regression line
 ggplot(df, aes(x = Cargo_Weight_tons, y = Profit, color = Ship_Type)) +
   geom_point(alpha = 0.6, size = 3) +  # Scatter points
@@ -177,11 +211,40 @@ ggplot(df, aes(x = Cargo_Weight_tons, y = Profit, color = Ship_Type)) +
   theme_minimal()
 ```
 
-<details>
-
-<summary>Click here to show the R code</summary>
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+# Scatter plot with regression line
+ggplot(df, aes(x = Cargo_Weight_tons, y = Profit, color = Ship_Type)) +
+  geom_point(alpha = 0.6, size = 3) +  # Scatter points
+  geom_smooth(method = "lm", se = FALSE) +  # Linear trend line
+  facet_wrap(~Route_Type) +  # Facet by Route Type
+  labs(title = "Effect of Cargo Weight on Profitability",
+       x = "Cargo Weight (tons)", y = "Profit (USD)", color = "Ship Type") +
+  theme_minimal()
+```
 
 ```{r}
+#| echo: false
+# Select only numerical columns for correlation
+num_data <- df[, sapply(df, is.numeric)]
+
+# Compute correlation matrix
+cor_matrix <- cor(num_data, use = "complete.obs")
+
+# Display correlation with Revenue_per_Voyage_USD
+cor_with_revenue <- cor_matrix[, "Revenue_per_Voyage_USD"]
+
+# Sort by highest correlation
+sorted_cor <- sort(cor_with_revenue, decreasing = TRUE)
+print(sorted_cor)
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
 # Select only numerical columns for correlation
 num_data <- df[, sapply(df, is.numeric)]
 
@@ -200,11 +263,42 @@ print(sorted_cor)
 
 ## Profitability Analysis
 
-<details>
+```{r}
+#| echo: false
+df_new <- df %>%
+  mutate(Profit_per_Voyage_USD = Revenue_per_Voyage_USD - Operational_Cost_USD)
 
-<summary>Click here to show the R code</summary>
+# Analyze Profit by Ship_Type
+profit_by_ship_type <- df_new %>%
+  group_by(Ship_Type) %>%
+  summarise(Average_Profit = mean(Profit_per_Voyage_USD),
+            Total_Profit = sum(Profit_per_Voyage_USD),
+            Count = n())
+
+# Analyze Profit by Engine_Type
+profit_by_engine_type <- df_new %>%
+  group_by(Engine_Type) %>%
+  summarise(Average_Profit = mean(Profit_per_Voyage_USD),
+            Total_Profit = sum(Profit_per_Voyage_USD),
+            Count = n())
+
+# Analyze Profit by Route_Type
+profit_by_route_type <- df_new %>%
+  group_by(Route_Type) %>%
+  summarise(Average_Profit = mean(Profit_per_Voyage_USD),
+            Total_Profit = sum(Profit_per_Voyage_USD),
+            Count = n())
+
+# Display results
+print(profit_by_ship_type)
+print(profit_by_engine_type)
+print(profit_by_route_type)
+```
 
 ```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
 df_new <- df %>%
   mutate(Profit_per_Voyage_USD = Revenue_per_Voyage_USD - Operational_Cost_USD)
 
