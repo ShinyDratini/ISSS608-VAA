@@ -35,12 +35,10 @@ date-modified: "last-modified"
 
 ```{r}
 #| echo: false
-library(readr)
-library(viridis)
-pacman::p_load(SmartEDA, tidyverse, tidymodels, lubridate, 
+pacman::p_load(readr, viridis, SmartEDA, tidyverse, tidymodels, lubridate, 
                knitr, dplyr, ggplot2, ggHoriPlot, ggthemes, corrplot, ggstatsplot,
                ggdist, ggridges, car, plotly,
-               colorspace, crosstalk)
+               colorspace, crosstalk, scales)
 ```
 
 ## Data Source and Data Importing
@@ -391,6 +389,96 @@ bp <- plot_ly(
 # Display the plot
 bp
 ```
+
+```{r}
+bp <- plot_ly(
+  data = df,
+  x = ~Efficiency_nm_per_kWh,  # ✅ Efficiency instead of Cost
+  y = ~Profit,  # ✅ Profitability instead of Revenue
+  size = ~Cargo_Weight_tons,  # ✅ Bubble size based on cargo weight
+  color = ~Ship_Type,  # ✅ Color-coded by Ship Type
+  frame = ~Date,  
+  text = ~paste("Ship Type:", Ship_Type,
+                "<br>Route Type:", Route_Type,
+                "<br>Engine Type:", Engine_Type,
+                "<br>Efficiency:", round(Efficiency_nm_per_kWh, 2),
+                "<br>Profit (USD):", scales::comma(Profit)),
+  hoverinfo = "text",
+  type = 'scatter', 
+  mode = 'markers',
+  marker = list(line = list(width = 0))
+) %>%
+  layout(
+    title = "Ship Efficiency vs Profitability",
+    xaxis = list(title = "Efficiency (nm per kWh)"),
+    yaxis = list(title = "Profit (USD)"),
+    showlegend = TRUE
+  ) %>%
+  animation_opts(
+    frame = 100, 
+    redraw = TRUE
+  ) %>%
+  animation_slider(
+    currentvalue = list(prefix = "Date: ")
+  )
+
+# Display the plot
+bp
+```
+
+
+```{r}
+summary_data <- df %>%
+  group_by(Ship_Type, Route_Type, Engine_Type, Maintenance_Status, Date) %>%
+  summarise(
+    Total_Operational_Cost = sum(Operational_Cost_USD, na.rm = TRUE),
+    Total_Revenue = sum(Revenue_per_Voyage_USD, na.rm = TRUE),
+    Profit = sum(Revenue_per_Voyage_USD, na.rm = TRUE) - sum(Operational_Cost_USD, na.rm = TRUE),
+    Profit_Margin_Percentage = (Profit / Total_Revenue) * 100,  # ✅ Compute Profit Margin
+    Average_Load_Percentage = mean(Average_Load_Percentage, na.rm = TRUE),  # ✅ Aggregate properly
+    Turnaround_Time = mean(Turnaround_Time_hours, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Check output
+print(summary_data)
+
+bp <- plot_ly(
+  data = summary_data,
+  x = ~Average_Load_Percentage,  # ✅ How full the ship is
+  y = ~Profit_Margin_Percentage,  # ✅ How much profit per revenue
+  size = ~Turnaround_Time,  # ✅ Bubble size based on turnaround time
+  color = ~Route_Type,  # ✅ Color-coded by Route Type
+  frame = ~Date,  
+  text = ~paste("Ship Type:", Ship_Type,
+                "<br>Route Type:", Route_Type,
+                "<br>Load Factor (%):", Average_Load_Percentage,
+                "<br>Profit Margin (%):", round(Profit_Margin_Percentage, 2),
+                "<br>Turnaround Time (days):", Turnaround_Time),
+  hoverinfo = "text",
+  type = 'scatter', 
+  mode = 'markers',
+  marker = list(line = list(width = 0))
+) %>%
+  layout(
+    title = "Load Factor vs Profit Margin",
+    xaxis = list(title = "Average Load Percentage (%)"),
+    yaxis = list(title = "Profit Margin (%)"),
+    showlegend = TRUE
+  ) %>%
+  animation_opts(
+    frame = 100, 
+    redraw = TRUE
+  ) %>%
+  animation_slider(
+    currentvalue = list(prefix = "Date: ")
+  )
+
+# Display the plot
+bp
+```
+
+
 
 ```{r}
 
