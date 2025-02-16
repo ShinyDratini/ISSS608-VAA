@@ -5,6 +5,10 @@ date: "February 01, 2025"
 date-modified: "last-modified" 
 ---
 
+:::{.center}
+![Gulf of Guinea](g.jpg)
+:::
+
 # Overview
 
 ## Setting the Scene
@@ -99,6 +103,9 @@ colSums(is.na(df))
 #| echo: false
 rows_with_na <- sum(!complete.cases(df))  # More efficient than apply()
 print(paste("Number of rows with at least one NA:", rows_with_na))
+
+# Define total_rows before using it
+total_rows <- nrow(df)
 
 percentage_na_rows <- (rows_with_na / total_rows) * 100
 print(paste("Corrected Percentage of rows with missing values:", round(percentage_na_rows, 2), "%"))
@@ -1346,8 +1353,8 @@ Route Type & Weather: Routes affected by rough weather have longer turnaround ti
 
 # References
 
-Alice Vervaeke. (2025). *Deep waters: The Maritime Security Landscape in the Gulf of Guinea. European Union Institute for Security Studies.* <https://www.iss.europa.eu/publications/briefs/deep-waters-maritime-security-landscape-gulf-guinea>
+Alice Vervaeke. (2025). *Deep waters: The Maritime Security Landscape in the Gulf of Guinea. European Union Institute for Security Studies.* Retrieved from <https://www.iss.europa.eu/publications/briefs/deep-waters-maritime-security-landscape-gulf-guinea>
 
-Kam, Tin Seong. (2023). *Visualising Distribution. R for Visual Analytics.* <https://r4va.netlify.app/chap09>
+Kam, Tin Seong. (2023). *Visualising Distribution. R for Visual Analytics.* Retrieved from <https://r4va.netlify.app/chap09>
 
-(N.d.-a). Retrieved from https://www.flaticon.com/free-icons/ship <a href="https://www.flaticon.com/free-icons/ship" title="ship icons">Ship icons created by Freepik - Flaticon</a> <>
+Antoniadis, A. (2020). Photo by Anastasios Antoniadis on unsplash. Retrieved from <https://unsplash.com/photos/cargo-ship-on-sea-under-cloudy-sky-during-daytime-AMXFr97d00c?utm_content=creditShareLink&utm_medium=referral&utm_source=unsplash>
