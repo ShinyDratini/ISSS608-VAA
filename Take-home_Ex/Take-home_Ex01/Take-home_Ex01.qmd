@@ -1274,30 +1274,35 @@ The difference in operational costs between “Fair” and “Critical” mainte
 The confidence interval for this difference ranges from -24,359.90 USD to 100,785.63 USD.
 The p-value is 0.3912, which is not statistically significant (p > 0.05).
 This suggests that operational costs do not significantly differ between the “Fair” and “Critical” maintenance statuses.
+
 Good vs. Critical:
 
 The difference in operational costs between “Good” and “Critical” maintenance statuses is 73,962.84 USD.
 The confidence interval for this difference ranges from 10,672.03 USD to 137,253.64 USD.
 The p-value is 0.0147, which is statistically significant (p < 0.05).
 This indicates that operational costs are significantly different between the “Good” and “Critical” maintenance statuses.
+
 Unknown vs. Critical:
 
 The difference in operational costs between “Unknown” and “Critical” maintenance statuses is -63,383.95 USD.
 The confidence interval for this difference ranges from -180,561.98 USD to 53,794.09 USD.
 The p-value is 0.5000, which is not statistically significant (p > 0.05).
 This suggests that operational costs do not significantly differ between the “Unknown” and “Critical” maintenance statuses.
+
 Good vs. Fair:
 
 The difference in operational costs between “Good” and “Fair” maintenance statuses is 35,749.97 USD.
 The confidence interval for this difference ranges from -27,070.43 USD to 98,570.37 USD.
 The p-value is 0.4550, which is not statistically significant (p > 0.05).
 This suggests that operational costs do not significantly differ between the “Good” and “Fair” maintenance statuses.
+
 Unknown vs. Fair:
 
 The difference in operational costs between “Unknown” and “Fair” maintenance statuses is -101,596.81 USD.
 The confidence interval for this difference ranges from -218,521.44 USD to 15,327.81 USD.
 The p-value is 0.1133, which is not statistically significant (p > 0.05).
 This suggests that operational costs do not significantly differ between the “Unknown” and “Fair” maintenance statuses.
+
 Unknown vs. Good:
 
 The difference in operational costs between “Unknown” and “Good” maintenance statuses is -137,346.78 USD.
@@ -1350,30 +1355,35 @@ The difference in operational costs between “Fair” and “Critical” mainte
 The confidence interval for this difference ranges from -129,594.48 USD to -9,856.25 USD.
 The p-value is 0.0151, which is statistically significant (p < 0.05).
 This indicates that operational costs are significantly different between the “Fair” and “Critical” maintenance statuses.
+
 Good vs. Critical:
 
 The difference in operational costs between “Good” and “Critical” maintenance statuses is 1,776.48 USD.
 The confidence interval for this difference ranges from -61,914.71 USD to 65,467.67 USD.
 The p-value is 0.9999, which is not statistically significant (p > 0.05).
 This suggests that operational costs do not significantly differ between the “Good” and “Critical” maintenance statuses.
+
 Unknown vs. Critical:
 
 The difference in operational costs between “Unknown” and “Critical” maintenance statuses is -85,714.28 USD.
 The confidence interval for this difference ranges from -207,855.52 USD to 36,426.95 USD.
 The p-value is 0.2680, which is not statistically significant (p > 0.05).
 This suggests that operational costs do not significantly differ between the “Unknown” and “Critical” maintenance statuses.
+
 Good vs. Fair:
 
 The difference in operational costs between “Good” and “Fair” maintenance statuses is 71,501.84 USD.
 The confidence interval for this difference ranges from 6,307.41 USD to 136,696.28 USD.
 The p-value is 0.0253, which is statistically significant (p < 0.05).
 This indicates that operational costs are significantly different between the “Good” and “Fair” maintenance statuses.
+
 Unknown vs. Fair:
 
 The difference in operational costs between “Unknown” and “Fair” maintenance statuses is -15,988.92 USD.
 The confidence interval for this difference ranges from -138,920.72 USD to 106,942.88 USD.
 The p-value is 0.9868, which is not statistically significant (p > 0.05).
 This suggests that operational costs do not significantly differ between the “Unknown” and “Fair” maintenance statuses.
+
 Unknown vs. Good:
 
 The difference in operational costs between “Unknown” and “Good” maintenance statuses is -87,490.76 USD.
