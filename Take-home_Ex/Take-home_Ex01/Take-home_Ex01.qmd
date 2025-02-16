@@ -1223,11 +1223,13 @@ anova_results
 
 ### Container Ship - Steam Turbine
 
-p-value: 0.00146 (Significant at 0.01 level) Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). You can explore which maintenance levels contribute to the difference using post-hoc tests (e.g., Tukey HSD).
+p-value: 0.00268 (Significant at the 0.01 level)
+Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). You can explore which maintenance levels contribute to the difference using post-hoc tests (e.g., Tukey HSD).
 
 ### Bulk Carrier - Heavy Fuel Oil (HFO)
 
-p-value: 0.00383 (Significant at 0.01 level) Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). Again, post-hoc tests like Tukey HSD can be run to identify which maintenance statuses differ.
+p-value: 0.00447 (Significant at the 0.01 level)
+Interpretation: There is a significant difference in operational costs across different maintenance statuses (p \< 0.05). Again, post-hoc tests like Tukey HSD can be run to identify which maintenance statuses differ.
 
 ```{r}
 #| echo: false
@@ -1266,17 +1268,43 @@ print(tukey_test)
 ::: callout-tip
 #### Tukey HSD test results for the Container Ship (Steam Turbine) above:
 
-Fair vs. Critical: 
-The difference in operational costs between "Fair" and "Critical" maintenance status is 45,571.73 USD. The confidence interval for this difference ranges from -13,059.80 USD to 104,203.30 USD. The p-value is 0.1605, which is not statistically significant (p \> 0.05). This suggests that the operational cost is not significantly different between the "Fair" and "Critical" maintenance statuses.
+Fair vs. Critical:
 
-Good vs. Critical: 
-The difference in operational costs between "Good" and "Critical" maintenance status is 95,727.44 USD. The confidence interval for this difference ranges from 34,271.37 USD to 157,183.50 USD. The p-value is 0.0009, which is statistically significant (p \< 0.05). This indicates that the operational cost is significantly different between the "Good" and "Critical" maintenance statuses.
+The difference in operational costs between “Fair” and “Critical” maintenance statuses is 38,212.87 USD.
+The confidence interval for this difference ranges from -24,359.90 USD to 100,785.63 USD.
+The p-value is 0.3912, which is not statistically significant (p > 0.05).
+This suggests that operational costs do not significantly differ between the “Fair” and “Critical” maintenance statuses.
+Good vs. Critical:
 
-Good vs. Fair: 
-The difference in operational costs between "Good" and "Fair" maintenance status is 50,155.71 USD. The confidence interval for this difference ranges from -9,909.12 USD to 110,220.50 USD. The p-value is 0.1217, which is not statistically significant (p \> 0.05). This indicates that the operational cost is not significantly different between the "Good" and "Fair" maintenance statuses.
+The difference in operational costs between “Good” and “Critical” maintenance statuses is 73,962.84 USD.
+The confidence interval for this difference ranges from 10,672.03 USD to 137,253.64 USD.
+The p-value is 0.0147, which is statistically significant (p < 0.05).
+This indicates that operational costs are significantly different between the “Good” and “Critical” maintenance statuses.
+Unknown vs. Critical:
 
-Summary: 
-The Good vs. Critical comparison is statistically significant, indicating that the maintenance status between "Good" and "Critical" has a significant effect on operational costs. The Fair vs. Critical and Good vs. Fair comparisons are not statistically significant, suggesting that there is no significant difference in operational costs between these groups for Container Ship - Steam Turbine.
+The difference in operational costs between “Unknown” and “Critical” maintenance statuses is -63,383.95 USD.
+The confidence interval for this difference ranges from -180,561.98 USD to 53,794.09 USD.
+The p-value is 0.5000, which is not statistically significant (p > 0.05).
+This suggests that operational costs do not significantly differ between the “Unknown” and “Critical” maintenance statuses.
+Good vs. Fair:
+
+The difference in operational costs between “Good” and “Fair” maintenance statuses is 35,749.97 USD.
+The confidence interval for this difference ranges from -27,070.43 USD to 98,570.37 USD.
+The p-value is 0.4550, which is not statistically significant (p > 0.05).
+This suggests that operational costs do not significantly differ between the “Good” and “Fair” maintenance statuses.
+Unknown vs. Fair:
+
+The difference in operational costs between “Unknown” and “Fair” maintenance statuses is -101,596.81 USD.
+The confidence interval for this difference ranges from -218,521.44 USD to 15,327.81 USD.
+The p-value is 0.1133, which is not statistically significant (p > 0.05).
+This suggests that operational costs do not significantly differ between the “Unknown” and “Fair” maintenance statuses.
+Unknown vs. Good:
+
+The difference in operational costs between “Unknown” and “Good” maintenance statuses is -137,346.78 USD.
+The confidence interval for this difference ranges from -254,657.24 USD to -20,036.32 USD.
+The p-value is 0.0144, which is statistically significant (p < 0.05).
+This indicates that operational costs are significantly different between the “Unknown” and “Good” maintenance statuses. 
+
 :::
 
 ```{r}
@@ -1316,17 +1344,42 @@ print(tukey_test)
 ::: callout-tip
 #### Tukey HSD test results for the Bulk Carrier (HFO) above:
 
-Fair vs. Critical: 
-The difference in operational costs between "Fair" and "Critical" maintenance status is -70,404.32 USD. The confidence interval for this difference ranges from -126,508.99 USD to -14,299.64 USD. The p-value is 0.0096, which is statistically significant (p \< 0.05). This indicates that the operational cost is significantly different between the "Fair" and "Critical" maintenance statuses.
+Fair vs. Critical:
 
+The difference in operational costs between “Fair” and “Critical” maintenance statuses is -69,725.36 USD.
+The confidence interval for this difference ranges from -129,594.48 USD to -9,856.25 USD.
+The p-value is 0.0151, which is statistically significant (p < 0.05).
+This indicates that operational costs are significantly different between the “Fair” and “Critical” maintenance statuses.
 Good vs. Critical:
-The difference in operational costs between "Good" and "Critical" maintenance status is 2,772.82 USD. The confidence interval for this difference ranges from -57,093.13 USD to 62,638.76 USD. The p-value is 0.9934, which is not statistically significant (p \> 0.05). This indicates that the operational \## cost is not significantly different between the "Good" and "Critical" maintenance statuses.
 
+The difference in operational costs between “Good” and “Critical” maintenance statuses is 1,776.48 USD.
+The confidence interval for this difference ranges from -61,914.71 USD to 65,467.67 USD.
+The p-value is 0.9999, which is not statistically significant (p > 0.05).
+This suggests that operational costs do not significantly differ between the “Good” and “Critical” maintenance statuses.
+Unknown vs. Critical:
+
+The difference in operational costs between “Unknown” and “Critical” maintenance statuses is -85,714.28 USD.
+The confidence interval for this difference ranges from -207,855.52 USD to 36,426.95 USD.
+The p-value is 0.2680, which is not statistically significant (p > 0.05).
+This suggests that operational costs do not significantly differ between the “Unknown” and “Critical” maintenance statuses.
 Good vs. Fair:
-The difference in operational costs between "Good" and "Fair" maintenance status is 73,177.13 USD. The confidence interval for this difference ranges from 12,542.89 USD to 133,811.38 USD. The p-value is 0.0134, which is statistically significant (p \< 0.05). This suggests that the operational cost \## is significantly different between the "Good" and "Fair" maintenance statuses.
 
-Summary: 
-The Fair vs. Critical comparison and the Good vs. Fair comparison are statistically significant, indicating that maintenance status does have an effect on operational costs. The Good vs. Critical comparison is not statistically significant, suggesting that maintenance status between "Good" and "Critical" may not have a significant impact on operational cost for Bulk Carrier - Heavy Fuel Oil (HFO).
+The difference in operational costs between “Good” and “Fair” maintenance statuses is 71,501.84 USD.
+The confidence interval for this difference ranges from 6,307.41 USD to 136,696.28 USD.
+The p-value is 0.0253, which is statistically significant (p < 0.05).
+This indicates that operational costs are significantly different between the “Good” and “Fair” maintenance statuses.
+Unknown vs. Fair:
+
+The difference in operational costs between “Unknown” and “Fair” maintenance statuses is -15,988.92 USD.
+The confidence interval for this difference ranges from -138,920.72 USD to 106,942.88 USD.
+The p-value is 0.9868, which is not statistically significant (p > 0.05).
+This suggests that operational costs do not significantly differ between the “Unknown” and “Fair” maintenance statuses.
+Unknown vs. Good:
+
+The difference in operational costs between “Unknown” and “Good” maintenance statuses is -87,490.76 USD.
+The confidence interval for this difference ranges from -212,328.60 USD to 37,347.07 USD.
+The p-value is 0.2692, which is not statistically significant (p > 0.05).
+This suggests that operational costs do not significantly differ between the “Unknown” and “Good” maintenance statuses.
 :::
 
 # Summary and Conclusion
