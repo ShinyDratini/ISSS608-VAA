@@ -6,7 +6,7 @@ date-modified: "last-modified"
 ---
 
 :::{.center}
-![Gulf of Guinea](g.jpg)
+![Cargo ship on sea by Anastasios Antoniadis](g.jpg)
 :::
 
 # Overview
