@@ -1,0 +1,60 @@
+---
+title: "Take-home Exercise 2"
+author: "Justin"
+date: "February 26, 2025"
+date-modified: "last-modified" 
+---
+
+# 3 Chosen data visualisation
+
+- Critic (Pros and Cons)
+- Make-over design
+- Describe time-series analyiss and visualisation methods and analysis results.
+
+# 1. Merchandise Trade Performance with Major Trading Partners, 2024
+
+## Pros
+
+1. Easy to identify the trading partners that has the highest total trades. 
+2. Easy to identify if a trading partner has more Exports or Imports.
+
+## Cons
+
+1. Hard to tell how much import and export does a trading partner has. 
+2. Limited information about the types of merchandises.
+3. The charts are not interactive.
+4. Can introduce time series analysis.
+
+
+# 2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024
+
+## Pros
+
+1. Neat bar chart which allows differentiation between the total number of Exports and Imports with percentages and amount ($) shown.
+2. The sections are broken down into categories.
+
+## Cons
+
+1. The bar chart has many sections and unable to understand what it is trying to show.
+2. Very brief information about the non-oil merchandise trade. 
+3. No time series which will allow users to identify trends.
+4. The charts are not interactive.
+
+# 3. Major Trading Partners For Trade in Services, 2023
+
+## Pros
+
+1. Easy to visualise
+
+## Cons
+
+1. Why is 2024 data not available.
+2. Why compare with 2019, is it 5 years
+3. Grouping partners into groups creates unfair comparison.
+4. Can show the types of import and exports
+
+
+### Additional Work
+
+1. To study the data and see if able to uncover more information.
+2. To see if able to use other ways to visualise the data and to provide more insights.
