@@ -599,7 +599,7 @@
     "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html",
     "title": "Take-home Exercise 2",
     "section": "",
-    "text": "Critic (Pros and Cons)\nMake-over design\nDescribe time-series analyiss and visualisation methods and analysis results."
+    "text": "Select three data visualization from https://www.singstat.gov.sg/modules/infographics/singapore-international-trade. Comment on the pros and cons and provide sketches of the make-over.\nUse appropriate ggplot2 and other packages to create the make-over of the three data visualization critic in part 1.\nAnalyse the data with time-series analysis or time-series forecasting methods with appropriate data visualization methods and R packages."
   },
   {
     "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#pros",
@@ -642,5 +642,54 @@
     "title": "Take-home Exercise 2",
     "section": "Cons",
     "text": "Cons\n\nWhy is 2024 data not available.\nWhy compare with 2019, is it 5 years\nGrouping partners into groups creates unfair comparison.\nCan show the types of import and exports\n\n\nAdditional Work\n\nTo study the data and see if able to uncover more information.\nTo see if able to use other ways to visualise the data and to provide more insights."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#merchandise-trade-performance-with-major-trading-partners-2024",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#merchandise-trade-performance-with-major-trading-partners-2024",
+    "title": "Take-home Exercise 2",
+    "section": "1. Merchandise Trade Performance with Major Trading Partners, 2024",
+    "text": "1. Merchandise Trade Performance with Major Trading Partners, 2024\n\nknitr::include_graphics(\"MTradePerf2024 new.png\")\n\n\n\n\n\n\n\n\nThis chart shows the merchandise trade performance with major partners in 2024. The bubbles reflects Singapore’s total merchandise trade value with the trading partner. The line between the green region and blue region in the chart represents the Trade Balance Line. The closer the white circle is to the line, the more balance the trade.\nWhy is this chart important? The trade balance—the difference between a country’s exports and imports—is a key indicator of economic health and plays a crucial role in shaping economic policy. It not only is an indicator of economic health, it also impacts other areas such as currency value, employment, global trade relations, and many more. (https://www.investopedia.com/terms/b/balanced-trade.asp)\n\nPros\n\nEasy to identify the trading partners that has the highest total trades.\nEasy to identify if a trading partner has more Exports or Imports.\n\n\n\nCons\n\nHard to tell the exact import and export trade each trading partner has.\nLimited information about the months breakdown.\nThe charts are not interactive."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#non-oil-merchandise-trade-by-major-commodity-sections-2024",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#non-oil-merchandise-trade-by-major-commodity-sections-2024",
+    "title": "Take-home Exercise 2",
+    "section": "2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024",
+    "text": "2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024\n\nknitr::include_graphics(\"NonOilMTrade2024 new.png\")\n\n\n\n\n\n\n\n\nThis chart shows the breakdown of non-oil merchandise trade by major commodity sections in 2024. It gives insights on the major commodity sections. Machinery & Transport Equipment is the highest followed by Chemicals & Chemical Products.\n\nPros\n\nNeat bar chart which allows shows the total number of Exports and Imports with percentages and amount shown.\nThe sections are broken down into relevant categories.\n\n\n\nCons\n\nThe Machinery and Transport Equipment bar chart has many sections and unable to understand what it is trying to show.\nVery brief information about the non-oil merchandise trade.\nNo time series which will allow users to identify trends.\nThe charts are not interactive."
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#major-trading-partners-for-trade-in-services-2023",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#major-trading-partners-for-trade-in-services-2023",
+    "title": "Take-home Exercise 2",
+    "section": "3. Major Trading Partners For Trade in Services, 2023",
+    "text": "3. Major Trading Partners For Trade in Services, 2023\n\nknitr::include_graphics(\"MTPartner20232 new.png\")\n\n\n\n\n\n\n\n\n\nPros\n\nEasy to visualize\n\n\n\nCons\n\nWhy is 2024 data not available.\nWhy compare with 2019, is it 5 years\nGrouping partners into groups creates unfair comparison.\nCan show the types of import and exports"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#getting-started",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#getting-started",
+    "title": "Take-home Exercise 2",
+    "section": "Getting Started",
+    "text": "Getting Started\nLoad pacman::p_load\n\npacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, fabletools)"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#merchandise-trade-performance-with-major-trading-partners-2024-1",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#merchandise-trade-performance-with-major-trading-partners-2024-1",
+    "title": "Take-home Exercise 2",
+    "section": "1. Merchandise Trade Performance with Major Trading Partners, 2024",
+    "text": "1. Merchandise Trade Performance with Major Trading Partners, 2024"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#non-oil-merchandise-trade-by-major-commodity-sections-2024-1",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#non-oil-merchandise-trade-by-major-commodity-sections-2024-1",
+    "title": "Take-home Exercise 2",
+    "section": "2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024",
+    "text": "2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024"
+  },
+  {
+    "objectID": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#major-trading-partners-for-trade-in-services-2023-1",
+    "href": "Take-home_Ex/Take-home_Ex02/Take-home_Ex02.html#major-trading-partners-for-trade-in-services-2023-1",
+    "title": "Take-home Exercise 2",
+    "section": "3. Major Trading Partners For Trade in Services, 2023",
+    "text": "3. Major Trading Partners For Trade in Services, 2023"
   }
 ]

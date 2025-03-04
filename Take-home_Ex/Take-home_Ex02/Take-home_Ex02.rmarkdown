@@ -5,6 +5,8 @@ date: "February 26, 2025"
 date-modified: "last-modified" 
 ---
 
+
+
 # The Task
 
 1.  Select three data visualization from https://www.singstat.gov.sg/modules/infographics/singapore-international-trade. Comment on the pros and cons and provide sketches of the make-over.
@@ -21,9 +23,13 @@ I have chosen these data visualization to critic because there seems to be areas
 
 ## 1. Merchandise Trade Performance with Major Trading Partners, 2024
 
+
+
 ```{r}
 knitr::include_graphics("MTradePerf2024 new.png")
 ```
+
+
 
 This chart shows the merchandise trade performance with major partners in 2024. The bubbles reflects Singapore's total merchandise trade value with the trading partner. The line between the green region and blue region in the chart represents the Trade Balance Line. The closer the white circle is to the line, the more balance the trade.
 
@@ -42,9 +48,13 @@ Why is this chart important? The trade balance—the difference between a countr
 
 ## 2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024
 
+
+
 ```{r}
 knitr::include_graphics("NonOilMTrade2024 new.png")
 ```
+
+
 
 This chart shows the breakdown of non-oil merchandise trade by major commodity sections in 2024. It gives insights on the major commodity sections. Machinery & Transport Equipment is the highest followed by Chemicals & Chemical Products.
 
@@ -62,9 +72,13 @@ This chart shows the breakdown of non-oil merchandise trade by major commodity s
 
 ## 3. Major Trading Partners For Trade in Services, 2023
 
+
+
 ```{r}
 knitr::include_graphics("MTPartner20232 new.png")
 ```
+
+
 
 ### Pros
 
@@ -82,9 +96,13 @@ knitr::include_graphics("MTPartner20232 new.png")
 ## Getting Started
 
 Load pacman::p_load
+
+
 ```{r}
 pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, fabletools)
 ```
+
+
 
 
 ## 1. Merchandise Trade Performance with Major Trading Partners, 2024
@@ -99,3 +117,4 @@ pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, fabletools)
 
 1.  To study the data and see if able to uncover more information.
 2.  To see if able to use other ways to visualize the data and to provide more insights.
+

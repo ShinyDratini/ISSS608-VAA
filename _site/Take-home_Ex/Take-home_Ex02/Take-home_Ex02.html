@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -135,7 +169,7 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">In-Class Exercise 5</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex04/In-Class_Ex07.html">
+    <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex07/In-Class_Ex07.html">
  <span class="dropdown-text">In-Class Exercise 7</span></a>
   </li>  
     </ul>
@@ -181,22 +215,21 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On This Page</h2>
    
   <ul class="collapse">
-  <li><a href="#chosen-data-visualisation" id="toc-chosen-data-visualisation" class="nav-link active" data-scroll-target="#chosen-data-visualisation">3 Chosen data visualisation</a></li>
-  <li><a href="#merchandise-trade-performance-with-major-trading-partners-2024" id="toc-merchandise-trade-performance-with-major-trading-partners-2024" class="nav-link" data-scroll-target="#merchandise-trade-performance-with-major-trading-partners-2024">1. Merchandise Trade Performance with Major Trading Partners, 2024</a>
+  <li><a href="#the-task" id="toc-the-task" class="nav-link active" data-scroll-target="#the-task">The Task</a></li>
+  <li><a href="#chosen-data-visualization" id="toc-chosen-data-visualization" class="nav-link" data-scroll-target="#chosen-data-visualization">3 Chosen data visualization</a>
   <ul class="collapse">
-  <li><a href="#pros" id="toc-pros" class="nav-link" data-scroll-target="#pros">Pros</a></li>
-  <li><a href="#cons" id="toc-cons" class="nav-link" data-scroll-target="#cons">Cons</a></li>
+  <li><a href="#merchandise-trade-performance-with-major-trading-partners-2024" id="toc-merchandise-trade-performance-with-major-trading-partners-2024" class="nav-link" data-scroll-target="#merchandise-trade-performance-with-major-trading-partners-2024">1. Merchandise Trade Performance with Major Trading Partners, 2024</a></li>
+  <li><a href="#non-oil-merchandise-trade-by-major-commodity-sections-2024" id="toc-non-oil-merchandise-trade-by-major-commodity-sections-2024" class="nav-link" data-scroll-target="#non-oil-merchandise-trade-by-major-commodity-sections-2024">2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024</a></li>
+  <li><a href="#major-trading-partners-for-trade-in-services-2023" id="toc-major-trading-partners-for-trade-in-services-2023" class="nav-link" data-scroll-target="#major-trading-partners-for-trade-in-services-2023">3. Major Trading Partners For Trade in Services, 2023</a></li>
   </ul></li>
-  <li><a href="#non-oil-merchandise-trade-by-major-commodity-sections-2024" id="toc-non-oil-merchandise-trade-by-major-commodity-sections-2024" class="nav-link" data-scroll-target="#non-oil-merchandise-trade-by-major-commodity-sections-2024">2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024</a>
+  <li><a href="#data-visualization-make-over" id="toc-data-visualization-make-over" class="nav-link" data-scroll-target="#data-visualization-make-over">Data Visualization Make-over</a>
   <ul class="collapse">
-  <li><a href="#pros-1" id="toc-pros-1" class="nav-link" data-scroll-target="#pros-1">Pros</a></li>
-  <li><a href="#cons-1" id="toc-cons-1" class="nav-link" data-scroll-target="#cons-1">Cons</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a></li>
+  <li><a href="#merchandise-trade-performance-with-major-trading-partners-2024-1" id="toc-merchandise-trade-performance-with-major-trading-partners-2024-1" class="nav-link" data-scroll-target="#merchandise-trade-performance-with-major-trading-partners-2024-1">1. Merchandise Trade Performance with Major Trading Partners, 2024</a></li>
+  <li><a href="#non-oil-merchandise-trade-by-major-commodity-sections-2024-1" id="toc-non-oil-merchandise-trade-by-major-commodity-sections-2024-1" class="nav-link" data-scroll-target="#non-oil-merchandise-trade-by-major-commodity-sections-2024-1">2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024</a></li>
+  <li><a href="#major-trading-partners-for-trade-in-services-2023-1" id="toc-major-trading-partners-for-trade-in-services-2023-1" class="nav-link" data-scroll-target="#major-trading-partners-for-trade-in-services-2023-1">3. Major Trading Partners For Trade in Services, 2023</a></li>
   </ul></li>
-  <li><a href="#major-trading-partners-for-trade-in-services-2023" id="toc-major-trading-partners-for-trade-in-services-2023" class="nav-link" data-scroll-target="#major-trading-partners-for-trade-in-services-2023">3. Major Trading Partners For Trade in Services, 2023</a>
-  <ul class="collapse">
-  <li><a href="#pros-2" id="toc-pros-2" class="nav-link" data-scroll-target="#pros-2">Pros</a></li>
-  <li><a href="#cons-2" id="toc-cons-2" class="nav-link" data-scroll-target="#cons-2">Cons</a></li>
-  </ul></li>
+  <li><a href="#time-series-analysis-time-series-forecating" id="toc-time-series-analysis-time-series-forecating" class="nav-link" data-scroll-target="#time-series-analysis-time-series-forecating">Time-Series Analysis &amp; Time-Series Forecating</a></li>
   </ul>
 </nav>
     </div>
@@ -229,7 +262,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 27, 2025</p>
+      <p class="date-modified">March 5, 2025</p>
     </div>
   </div>
     
@@ -240,78 +273,138 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="chosen-data-visualisation" class="level1">
-<h1>3 Chosen data visualisation</h1>
-<ul>
-<li>Critic (Pros and Cons)</li>
-<li>Make-over design</li>
-<li>Describe time-series analyiss and visualisation methods and analysis results.</li>
-</ul>
+<section id="the-task" class="level1">
+<h1>The Task</h1>
+<ol type="1">
+<li>Select three data visualization from https://www.singstat.gov.sg/modules/infographics/singapore-international-trade. Comment on the pros and cons and provide sketches of the make-over.</li>
+<li>Use appropriate ggplot2 and other packages to create the make-over of the three data visualization critic in part 1.</li>
+<li>Analyse the data with time-series analysis or time-series forecasting methods with appropriate data visualization methods and R packages.</li>
+</ol>
 </section>
-<section id="merchandise-trade-performance-with-major-trading-partners-2024" class="level1">
-<h1>1. Merchandise Trade Performance with Major Trading Partners, 2024</h1>
-<section id="pros" class="level2">
-<h2 class="anchored" data-anchor-id="pros">Pros</h2>
+<section id="chosen-data-visualization" class="level1">
+<h1>3 Chosen data visualization</h1>
+<p>I have chosen these data visualization to critic because there seems to be areas of improvement.</p>
+<ol type="1">
+<li>Merchandise Trade Performance with Major Trading Partners, 2024</li>
+<li>Non-Oil Merchandise Trade By Major Commodity Sections, 2024</li>
+<li>Major Trading Partners For Trade in Services, 2023</li>
+</ol>
+<section id="merchandise-trade-performance-with-major-trading-partners-2024" class="level2">
+<h2 class="anchored" data-anchor-id="merchandise-trade-performance-with-major-trading-partners-2024">1. Merchandise Trade Performance with Major Trading Partners, 2024</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"MTradePerf2024 new.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="MTradePerf2024 new.png" class="img-fluid figure-img" width="295"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This chart shows the merchandise trade performance with major partners in 2024. The bubbles reflects Singapore’s total merchandise trade value with the trading partner. The line between the green region and blue region in the chart represents the Trade Balance Line. The closer the white circle is to the line, the more balance the trade.</p>
+<p>Why is this chart important? The trade balance—the difference between a country’s exports and imports—is a key indicator of economic health and plays a crucial role in shaping economic policy. It not only is an indicator of economic health, it also impacts other areas such as currency value, employment, global trade relations, and many more. (https://www.investopedia.com/terms/b/balanced-trade.asp)</p>
+<section id="pros" class="level3">
+<h3 class="anchored" data-anchor-id="pros">Pros</h3>
 <ol type="1">
 <li>Easy to identify the trading partners that has the highest total trades.</li>
 <li>Easy to identify if a trading partner has more Exports or Imports.</li>
 </ol>
 </section>
-<section id="cons" class="level2">
-<h2 class="anchored" data-anchor-id="cons">Cons</h2>
+<section id="cons" class="level3">
+<h3 class="anchored" data-anchor-id="cons">Cons</h3>
 <ol type="1">
-<li>Hard to tell how much import and export does a trading partner has.</li>
-<li>Limited information about the types of merchandises.</li>
+<li>Hard to tell the exact import and export trade each trading partner has.</li>
+<li>Limited information about the months breakdown.</li>
 <li>The charts are not interactive.</li>
-<li>Can introduce time series analysis.</li>
 </ol>
 </section>
 </section>
-<section id="non-oil-merchandise-trade-by-major-commodity-sections-2024" class="level1">
-<h1>2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024</h1>
-<section id="pros-1" class="level2">
-<h2 class="anchored" data-anchor-id="pros-1">Pros</h2>
+<section id="non-oil-merchandise-trade-by-major-commodity-sections-2024" class="level2">
+<h2 class="anchored" data-anchor-id="non-oil-merchandise-trade-by-major-commodity-sections-2024">2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"NonOilMTrade2024 new.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="NonOilMTrade2024 new.png" class="img-fluid figure-img" width="241"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This chart shows the breakdown of non-oil merchandise trade by major commodity sections in 2024. It gives insights on the major commodity sections. Machinery &amp; Transport Equipment is the highest followed by Chemicals &amp; Chemical Products.</p>
+<section id="pros-1" class="level3">
+<h3 class="anchored" data-anchor-id="pros-1">Pros</h3>
 <ol type="1">
-<li>Neat bar chart which allows differentiation between the total number of Exports and Imports with percentages and amount ($) shown.</li>
-<li>The sections are broken down into categories.</li>
+<li>Neat bar chart which allows shows the total number of Exports and Imports with percentages and amount shown.</li>
+<li>The sections are broken down into relevant categories.</li>
 </ol>
 </section>
-<section id="cons-1" class="level2">
-<h2 class="anchored" data-anchor-id="cons-1">Cons</h2>
+<section id="cons-1" class="level3">
+<h3 class="anchored" data-anchor-id="cons-1">Cons</h3>
 <ol type="1">
-<li>The bar chart has many sections and unable to understand what it is trying to show.</li>
+<li>The Machinery and Transport Equipment bar chart has many sections and unable to understand what it is trying to show.</li>
 <li>Very brief information about the non-oil merchandise trade.</li>
 <li>No time series which will allow users to identify trends.</li>
 <li>The charts are not interactive.</li>
 </ol>
 </section>
 </section>
-<section id="major-trading-partners-for-trade-in-services-2023" class="level1">
-<h1>3. Major Trading Partners For Trade in Services, 2023</h1>
-<section id="pros-2" class="level2">
-<h2 class="anchored" data-anchor-id="pros-2">Pros</h2>
+<section id="major-trading-partners-for-trade-in-services-2023" class="level2">
+<h2 class="anchored" data-anchor-id="major-trading-partners-for-trade-in-services-2023">3. Major Trading Partners For Trade in Services, 2023</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"MTPartner20232 new.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="MTPartner20232 new.png" class="img-fluid figure-img" width="294"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="pros-2" class="level3">
+<h3 class="anchored" data-anchor-id="pros-2">Pros</h3>
 <ol type="1">
-<li>Easy to visualise</li>
+<li>Easy to visualize</li>
 </ol>
 </section>
-<section id="cons-2" class="level2">
-<h2 class="anchored" data-anchor-id="cons-2">Cons</h2>
+<section id="cons-2" class="level3">
+<h3 class="anchored" data-anchor-id="cons-2">Cons</h3>
 <ol type="1">
 <li>Why is 2024 data not available.</li>
 <li>Why compare with 2019, is it 5 years</li>
 <li>Grouping partners into groups creates unfair comparison.</li>
 <li>Can show the types of import and exports</li>
 </ol>
-<section id="additional-work" class="level3">
-<h3 class="anchored" data-anchor-id="additional-work">Additional Work</h3>
+</section>
+</section>
+</section>
+<section id="data-visualization-make-over" class="level1">
+<h1>Data Visualization Make-over</h1>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>Load pacman::p_load</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, tsibble, feasts, fable, seasonal, fabletools)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="merchandise-trade-performance-with-major-trading-partners-2024-1" class="level2">
+<h2 class="anchored" data-anchor-id="merchandise-trade-performance-with-major-trading-partners-2024-1">1. Merchandise Trade Performance with Major Trading Partners, 2024</h2>
+</section>
+<section id="non-oil-merchandise-trade-by-major-commodity-sections-2024-1" class="level2">
+<h2 class="anchored" data-anchor-id="non-oil-merchandise-trade-by-major-commodity-sections-2024-1">2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024</h2>
+</section>
+<section id="major-trading-partners-for-trade-in-services-2023-1" class="level2">
+<h2 class="anchored" data-anchor-id="major-trading-partners-for-trade-in-services-2023-1">3. Major Trading Partners For Trade in Services, 2023</h2>
+</section>
+</section>
+<section id="time-series-analysis-time-series-forecating" class="level1">
+<h1>Time-Series Analysis &amp; Time-Series Forecating</h1>
 <ol type="1">
 <li>To study the data and see if able to uncover more information.</li>
-<li>To see if able to use other ways to visualise the data and to provide more insights.</li>
+<li>To see if able to use other ways to visualize the data and to provide more insights.</li>
 </ol>
 
 
-</section>
-</section>
 </section>
 
 </main> <!-- /main -->
