@@ -81,13 +81,324 @@ knitr::include_graphics("MTPartner20232 new.png")
 
 ## Getting Started
 
+### Installing and loading required libraries
+
 Load pacman::p_load
 ```{r}
-pacman::p_load(tidyverse, tsibble, feasts, fable, seasonal, fabletools)
+pacman::p_load(readxl, ggplot2, tidyverse, dplyr, plotly, scales, tsibble, feasts, fable, seasonal, fabletools)
 ```
+
+### Importing the data
+
+```{r}
+# Define file paths
+MTC <- "data/Merchandise_Trade_by_Country.xlsx"
+MT <- "data/Merchandise_Trade.xlsx"
+TIS <- "data/Trade_in_Services.xlsx"
+
+# Check if files exist and read sheet names
+if (file.exists(MTC)) {
+  MTC_sheets <- excel_sheets(MTC)
+  print("Sheets in MTC:")
+  print(MTC_sheets)
+} else {
+  print("MTC file not found")
+}
+
+if (file.exists(MT)) {
+  MT_sheets <- excel_sheets(MT)
+  print("Sheets in MT:")
+  print(MT_sheets)
+} else {
+  print("MT file not found")
+}
+
+if (file.exists(TIS)) {
+  TIS_sheets <- excel_sheets(TIS)
+  print("Sheets in TIS:")
+  print(TIS_sheets)
+} else {
+  print("TIS file not found")
+}
+```
+```{r}
+df_MTC <- lapply(MTC_sheets, function(sheet) read_excel(MTC, sheet = sheet))
+names(df_MTC) <- MTC_sheets  # Assign sheet names
+
+df_MT <- lapply(MT_sheets, function(sheet) read_excel(MT, sheet = sheet))
+names(df_MT) <- MT_sheets  # Assign sheet names
+
+df_TIS <- lapply(TIS_sheets, function(sheet) read_excel(TIS, sheet = sheet))
+names(df_TIS) <- TIS_sheets  # Assign sheet names
+```
+
+### Summary of Data
+
+```{r}
+df_MTC$T1  # Access data from 'T1' 
+```
+
+### Data Processing
+
 
 
 ## 1. Merchandise Trade Performance with Major Trading Partners, 2024
+
+```{r}
+# Load dataset from Excel file
+file_path <- "data/Merchandise_Trade_by_Country.xlsx"
+
+# Read Import (T1), Export (T2), and Re-Export (T3) sheets
+imports <- df_MTC$T1 %>%
+  rename(Imports = `2024`)  # Assuming "2024" is the latest trade year column
+
+exports <- df_MTC$T2 %>%
+  rename(Exports = `2024`)  # Rename export values
+
+re_exports <- df_MTC$T3 %>%
+  rename(Re_Exports = `2024`)  # Rename re-export values
+
+# Merge all datasets (Imports, Exports, and Re-Exports)
+trade_data <- imports %>%
+  left_join(exports, by = "Data Series") %>%
+  left_join(re_exports, by = "Data Series") %>%
+  mutate(
+    Total_Exports = Exports + Re_Exports,  # Include Re-Exports in total exports
+    Trade_Balance = Total_Exports - Imports,  # Adjusted trade balance
+    Trade_Sign = ifelse(Trade_Balance >= 0, "+", "-")  # Surplus or Deficit indicator
+  )
+
+# Remove 'Total All Markets' to focus on individual countries
+trade_data <- trade_data %>%
+  filter(!grepl("Total", `Data Series`))
+
+# Check the updated dataset
+print(head(trade_data))
+
+```
+```{r}
+trade_summary <- trade_data %>%
+  summarise(
+    Total_Imports = sum(Imports, na.rm = TRUE),
+    Total_Exports = sum(Exports, na.rm = TRUE),
+    Total_ReExports = sum(Re_Exports, na.rm = TRUE),
+    Adjusted_Trade_Balance = sum(Trade_Balance, na.rm = TRUE)  # Updated balance
+  )
+
+print(trade_summary)
+```
+```{r}
+# Select only 2024 values and remove duplicates
+imports <- df_MTC$T1 %>%
+  select(`Data Series`, `2024`) %>%
+  distinct() %>%
+  rename(Imports = `2024`)
+
+exports <- df_MTC$T2 %>%
+  select(`Data Series`, `2024`) %>%
+  distinct() %>%
+  rename(Exports = `2024`)
+
+re_exports <- df_MTC$T3 %>%
+  select(`Data Series`, `2024`) %>%
+  distinct() %>%
+  rename(Re_Exports = `2024`)
+```
+
+```{r}
+# Merge datasets based on 'Data Series' (Country/Continent Name)
+trade_data <- imports %>%
+  left_join(exports, by = "Data Series") %>%
+  left_join(re_exports, by = "Data Series") %>%
+  mutate(
+    Total_Exports = Exports + Re_Exports,  # Include Re-Exports in total exports
+    Trade_Balance = Total_Exports - Imports,  # Adjusted trade balance
+    Trade_Sign = ifelse(Trade_Balance >= 0, "+", "-")  # Surplus or Deficit indicator
+  ) %>%
+  filter(!grepl("Total", `Data Series`))  # Remove total market row
+
+# Check the updated dataset
+print(head(trade_data))
+```
+
+```{r}
+table(duplicated(trade_data$`Data Series`))
+```
+```{r}
+# Define list of continent names
+continents <- c("Asia", "America", "Africa", "Europe", "Oceania")
+
+# Filter dataset to keep only continent names
+df_continents <- trade_data %>%
+  filter(`Data Series` %in% continents)
+
+print(df_continents)  # Verify continent-level data
+```
+
+```{r}
+df_countries <- trade_data %>%
+  filter(!(`Data Series` %in% continents))  # Exclude continents
+
+print(df_countries)  # Verify country-level data
+```
+```{r}
+df_top20 <- df_countries %>%
+  mutate(Total_Trade = Imports + Total_Exports) %>%
+  arrange(desc(Total_Trade)) %>%
+  top_n(20, Total_Trade)
+```
+
+```{r}
+# Check if Imports or Exports contain NA or Inf
+summary(df_countries$Imports_Billions)
+summary(df_countries$Total_Exports_Billions)
+```
+
+```{r}
+# Convert to billions for better scaling
+df_top20 <- df_top20 %>%
+  mutate(
+    Imports_Billions = Imports / 1000,
+    Total_Exports_Billions = Total_Exports / 1000
+  )
+
+# Create an improved plot
+p2 <- ggplot(df_top20, aes(
+  x = Imports_Billions, 
+  y = Total_Exports_Billions, 
+  size = abs(Trade_Balance), 
+  fill = Trade_Sign, 
+  text = `Data Series`  # Explicitly map country name for tooltip
+)) +
+  
+  # Bubble plot
+  geom_point(shape = 21, alpha = 0.8) +
+  
+  # Color scheme for trade surplus/deficit
+  scale_fill_manual(values = c("+" = "green", "-" = "red")) +
+  
+  # Scale axes
+  scale_x_continuous(labels = label_number(scale = 1)) + 
+  scale_y_continuous(labels = label_number(scale = 1)) +
+  
+  # Labels and styling
+  labs(
+    title = "Top 20 Countries: Trade Performance",
+    x = "Imports (S$ Billion)",
+    y = "Exports (S$ Billion, Including Re-Exports)",
+    size = "Trade Balance Magnitude",
+    fill = "Surplus / Deficit"
+  ) +
+  
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "right"
+  )
+
+# Convert to plotly & explicitly include "text" for tooltip
+p2_plotly <- ggplotly(p2, tooltip = c("text", "x", "y", "size"))
+p2_plotly
+```
+
+### Data Transformation
+
+
+```{r}
+# Define continents
+continents <- c("America", "Asia", "Europe", "Oceania", "Africa")
+
+# Extract continent-level data
+df_continents <- df_countries %>%
+  mutate(
+    Continent = case_when(
+      `Data Series` %in% c("Antigua And Barbuda", "Argentina", "Bahamas", "Bermuda", "Brazil", "Canada", 
+                           "Chile", "Colombia", "Costa Rica", "Cuba", "Dominican Rep", "Ecuador", 
+                           "El Salvador", "Guatemala", "Guyana", "Honduras", "Jamaica", "Mexico", 
+                           "Netherlands Antilles", "Panama", "Paraguay", "Peru", "Puerto Rico", 
+                           "St. Vincent And The Grenadines", "Trinidad And Tobago", "United States", 
+                           "United States Virgin Islands", "Uruguay", "Venezuela") ~ "America",
+      
+      `Data Series` %in% c("Afghanistan", "Bahrain", "Bangladesh", "Brunei", "Cambodia", "China", 
+                           "Christmas Island", "Hong Kong", "India", "Indonesia", "Iran", "Iraq", 
+                           "Israel", "Japan", "Jordan", "Kazakhstan", "Korea, Dem Peo Rep Of", 
+                           "Korea, Rep Of", "Kuwait", "Lao", "Lebanon", "Macao", "Malaysia", "Maldives", 
+                           "Mongolia", "Myanmar", "Nepal", "Oman", "Pakistan", "Philippines", "Qatar", 
+                           "Saudi Arabia", "Sri Lanka", "Syria", "Taiwan", "Thailand", "Turkiye", 
+                           "United Arab Emirates", "Viet Nam", "Yemen") ~ "Asia",
+      
+      `Data Series` %in% c("Austria", "Belarus", "Belgium", "Bulgaria", "Croatia", "Cyprus", 
+                           "Czech Rep", "Denmark", "Estonia", "Finland", "France", "Germany", 
+                           "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", 
+                           "Luxembourg", "Malta", "Netherlands", "Norway", "Poland", "Portugal", 
+                           "Romania", "Russia", "Slovakia", "Slovenia", "Spain", "Svalbard And Jan Mayen Islands", 
+                           "Sweden", "Switzerland", "Ukraine", "United Kingdom") ~ "Europe",
+      
+      `Data Series` %in% c("Antarctica", "Australia", "Fiji", "French Polynesia", "Guam", "Marshall Islands", 
+                           "New Caledonia", "New Zealand", "Northern Mariana Islands", "Papua New Guinea", 
+                           "Samoa", "Solomon Islands", "Vanuatu") ~ "Oceania",
+      
+      `Data Series` %in% c("Algeria", "Angola", "Benin", "Cameroon", "Cape Verde", "Comoros", 
+                           "Congo, Dem Rep Of", "Cote D'ivoire", "Djibouti", "Egypt", "Ethiopia", 
+                           "Gabon", "Ghana", "Guinea", "Kenya", "Liberia", "Libya", "Madagascar", 
+                           "Mauritius", "Morocco", "Mozambique", "Nigeria", "Reunion", "Seychelles", 
+                           "Sierra Leone", "Somalia", "South Africa", "Sudan", "Swaziland", "Tanzania", 
+                           "Tunisia", "Zambia", "Zimbabwe") ~ "Africa",
+      
+      TRUE ~ "Other"
+    )
+  ) %>%
+  group_by(Continent) %>%
+  summarise(
+    Imports = sum(Imports, na.rm = TRUE),
+    Total_Exports = sum(Total_Exports, na.rm = TRUE),
+    Trade_Balance = sum(Total_Exports - Imports, na.rm = TRUE)
+  ) %>%
+  mutate(
+    Imports_Billions = Imports / 1000,
+    Total_Exports_Billions = Total_Exports / 1000,
+    Trade_Sign = ifelse(Trade_Balance >= 0, "+", "-")
+  ) %>%
+  filter(Continent %in% continents)  # Keep only valid continents
+```
+
+```{r}
+# Create continent-level bubble chart
+p3 <- ggplot(df_continents, aes(x = Imports_Billions, y = Total_Exports_Billions, size = abs(Trade_Balance), fill = Continent)) +
+  
+  # Bubble plot
+  geom_point(shape = 21, alpha = 0.8) +
+  
+  # Scale axes (remove "B", since the title already mentions Billion)
+  scale_x_continuous(labels = label_number(scale = 1)) + 
+  scale_y_continuous(labels = label_number(scale = 1)) +
+  
+  # Labels and styling
+  labs(
+    title = "Trade Performance by Continent",
+    x = "Imports (S$ Billion)",
+    y = "Exports (S$ Billion, Including Re-Exports)",
+    size = "Trade Balance",
+    fill = "Continent"
+  ) +
+  
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "right"
+  )
+
+# Convert to interactive plotly chart
+p3_plotly <- ggplotly(p3, tooltip = c("x", "y", "size", "label"))
+p3_plotly
+```
+
 
 ## 2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024
 
