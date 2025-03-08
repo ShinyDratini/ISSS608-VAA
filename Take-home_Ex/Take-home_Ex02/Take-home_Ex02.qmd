@@ -7,7 +7,7 @@ date-modified: "last-modified"
 
 # The Task
 
-1.  Select three data visualization from https://www.singstat.gov.sg/modules/infographics/singapore-international-trade. Comment on the pros and cons and provide sketches of the make-over.
+1.  Select three data visualization from [Singstat](https://www.singstat.gov.sg/modules/infographics/singapore-international-trade). Comment on the pros and cons and provide sketches of the make-over.
 2.  Use appropriate ggplot2 and other packages to create the make-over of the three data visualization critic in part 1.
 3.  Analyse the data with time-series analysis or time-series forecasting methods with appropriate data visualization methods and R packages.
 
@@ -22,12 +22,15 @@ I have chosen these data visualization to critic because there seems to be areas
 ## 1. Merchandise Trade Performance with Major Trading Partners, 2024
 
 ```{r}
+#| echo: false
+
+
 knitr::include_graphics("MTradePerf2024 new.png")
 ```
 
 This chart shows the merchandise trade performance with major partners in 2024. The bubbles reflects Singapore's total merchandise trade value with the trading partner. The line between the green region and blue region in the chart represents the Trade Balance Line. The closer the white circle is to the line, the more balance the trade.
 
-Why is this chart important? The trade balance—the difference between a country's exports and imports—is a key indicator of economic health and plays a crucial role in shaping economic policy. It not only is an indicator of economic health, it also impacts other areas such as currency value, employment, global trade relations, and many more. (https://www.investopedia.com/terms/b/balanced-trade.asp)
+The trade balance—the difference between a country's exports and imports—is a key indicator of economic health and plays a crucial role in shaping economic policy. It not only is an indicator of economic health, it also impacts other areas such as currency value, employment, global trade relations, and many more. 
 
 ### Pros
 
@@ -43,6 +46,9 @@ Why is this chart important? The trade balance—the difference between a countr
 ## 2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024
 
 ```{r}
+#| echo: false
+
+
 knitr::include_graphics("NonOilMTrade2024 new.png")
 ```
 
@@ -63,350 +69,639 @@ This chart shows the breakdown of non-oil merchandise trade by major commodity s
 ## 3. Major Trading Partners For Trade in Services, 2023
 
 ```{r}
+#| echo: false
+
+
 knitr::include_graphics("MTPartner20232 new.png")
 ```
 
 ### Pros
 
 1.  Easy to visualize
+2.  Good comparison by using 2 years
+3.  Comparison between top partners
 
 ### Cons
 
-1.  Why is 2024 data not available.
-2.  Why compare with 2019, is it 5 years
-3.  Grouping partners into groups creates unfair comparison.
-4.  Can show the types of import and exports
+1.  Could use more years data for comparison
+2.  Grouping partners into groups creates unfair comparison.
+3.  Chart is not interactive
 
 # Data Visualization Make-over
+
+## Sketches
+
+### 1. Sketch for Merchandise Trade Performance with Major Trading Partners, 2024
+
+```{r}
+#| echo: false
+
+
+knitr::include_graphics("sketch1.png")
+```
+
+Scatter plot will be used to show the trend of Merchandise Trade. A slider will be added to display the amount of import/export for each country over the years. Bubble size will be according to total trade.
+
+### 2. Sketch for Non-Oil Merchandise Trade By Major Commodity Sections, 2024
+
+```{r}
+#| echo: false
+
+
+knitr::include_graphics("sketch2.png")
+```
+
+Bar chart will be used to show the trend of the different commodities across 10 years. Chart will be interactive where users are able to select the type of commodity for comparison.
+
+### 3. Sketch for Major Trading Partners For Trade in Services, 2023
+
+```{r}
+#| echo: false
+
+
+knitr::include_graphics("sketch3.png")
+```
+
+Trade in services refers to the exchange of intangible economic activities between countries, such as financial services, IT services, tourism, education, consulting, and transportation. Unlike merchandise trade, which involves physical goods, trade in services revolves around expertise, skills, and knowledge. Heat map will be used to show trend of import, export and also trade balance. Tooltip will be added where user can see the values when the mouse hover over each cell.
 
 ## Getting Started
 
 ### Installing and loading required libraries
 
 Load pacman::p_load
+
 ```{r}
-pacman::p_load(readxl, ggplot2, tidyverse, dplyr, plotly, scales, tsibble, feasts, fable, seasonal, fabletools)
+#| echo: false
+
+
+pacman::p_load(readxl, readr, ggplot2, tidyverse, dplyr, plotly, scales, lubridate, feasts, viridis, stringr, tsibble, fable, seasonal, fabletools)
 ```
+
+pacman::p_load(readxl, readr, ggplot2, tidyverse, dplyr, plotly, scales, lubridate, feasts, viridis, stringr, tsibble, fable, seasonal, fabletools)
 
 ### Importing the data
 
+Load the dataset: 
+1. Trade in services dataset [Singstat Trade in Services](https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/trade-in-services/latest-data) 
+2. Merchandise trade by Country dataset [Singstat Merchandise Trade](https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/merchandise-trade/latest-data) 
+3. Merchandise trade dataset [Singstat Merchandise Trade](https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/merchandise-trade/latest-data)
+
 ```{r}
+#| code-fold: true
+#| code-summary: "Click here to show the R code"
+#| eval: false
+
+
 # Define file paths
-MTC <- "data/Merchandise_Trade_by_Country.xlsx"
-MT <- "data/Merchandise_Trade.xlsx"
-TIS <- "data/Trade_in_Services.xlsx"
-
-# Check if files exist and read sheet names
-if (file.exists(MTC)) {
-  MTC_sheets <- excel_sheets(MTC)
-  print("Sheets in MTC:")
-  print(MTC_sheets)
-} else {
-  print("MTC file not found")
-}
-
-if (file.exists(MT)) {
-  MT_sheets <- excel_sheets(MT)
-  print("Sheets in MT:")
-  print(MT_sheets)
-} else {
-  print("MT file not found")
-}
-
-if (file.exists(TIS)) {
-  TIS_sheets <- excel_sheets(TIS)
-  print("Sheets in TIS:")
-  print(TIS_sheets)
-} else {
-  print("TIS file not found")
-}
+# Load datasets
+tis_import_data <- read_csv("data/tis_import.csv")
+tis_export_data <- read_csv("data/tis_export.csv")
+mtcexport_data <- read_csv("data/MTC_Ex.csv")
+mtcimport_data <- read_csv("data/MTC_Import.csv")
+mtexport_data <- read_csv("data/Merchandise_Trade_Export.csv")
+mtimport_data <- read_csv("data/Merchandise_Trade_Import.csv")
+# Read Import & Export Data
+import_data5 <- read_csv("data/Merchandise_Trade_Import.csv", show_col_types = FALSE)
+export_data5 <- read_csv("data/Merchandise_Trade_Export.csv", show_col_types = FALSE)
 ```
 ```{r}
-df_MTC <- lapply(MTC_sheets, function(sheet) read_excel(MTC, sheet = sheet))
-names(df_MTC) <- MTC_sheets  # Assign sheet names
+#| echo: false
 
-df_MT <- lapply(MT_sheets, function(sheet) read_excel(MT, sheet = sheet))
-names(df_MT) <- MT_sheets  # Assign sheet names
 
-df_TIS <- lapply(TIS_sheets, function(sheet) read_excel(TIS, sheet = sheet))
-names(df_TIS) <- TIS_sheets  # Assign sheet names
+# Define file paths
+# Load datasets
+tis_import_data <- read_csv("data/tis_import.csv")
+tis_export_data <- read_csv("data/tis_export.csv")
+mtcexport_data <- read_csv("data/MTC_Ex.csv")
+mtcimport_data <- read_csv("data/MTC_Import.csv")
+mtexport_data <- read_csv("data/Merchandise_Trade_Export.csv")
+mtimport_data <- read_csv("data/Merchandise_Trade_Import.csv")
+# Read Import & Export Data
+import_data5 <- read_csv("data/Merchandise_Trade_Import.csv", show_col_types = FALSE)
+export_data5 <- read_csv("data/Merchandise_Trade_Export.csv", show_col_types = FALSE)
 ```
 
-### Summary of Data
-
-```{r}
-df_MTC$T1  # Access data from 'T1' 
-```
 
 ### Data Processing
 
+The dataset has been cleaned in excel and saved as csv. Irrelevant values were removed to reduce file size. Recent decade data were used in this analysis.
 
+## Visualisation
 
 ## 1. Merchandise Trade Performance with Major Trading Partners, 2024
 
+Steps: Export and Import data were merged. Values were converted to numeric. Top 20 total trade countries were selected. Add in filter to allow user to select countries. Create animated bubble plot. Display the animated bubble plot.
+
 ```{r}
-# Load dataset from Excel file
-file_path <- "data/Merchandise_Trade_by_Country.xlsx"
+# Keep only necessary columns (Remove unnamed columns)
+export_data <- mtcexport_data[, 1:11]
+import_data <- mtcimport_data[, 1:11]
 
-# Read Import (T1), Export (T2), and Re-Export (T3) sheets
-imports <- df_MTC$T1 %>%
-  rename(Imports = `2024`)  # Assuming "2024" is the latest trade year column
+# Convert from wide to long format (Fix column reference error)
+export_long2 <- export_data %>%
+  pivot_longer(cols = -`Data Series`, names_to = "Year", values_to = "Export Value") %>%
+  mutate(Year = as.numeric(Year))
 
-exports <- df_MTC$T2 %>%
-  rename(Exports = `2024`)  # Rename export values
+import_long2 <- import_data %>%
+  pivot_longer(cols = -`Data Series`, names_to = "Year", values_to = "Import Value") %>%
+  mutate(Year = as.numeric(Year))
 
-re_exports <- df_MTC$T3 %>%
-  rename(Re_Exports = `2024`)  # Rename re-export values
+# Merge export and import data
+trade_data2 <- merge(export_long2, import_long2, by = c("Data Series", "Year"))
 
-# Merge all datasets (Imports, Exports, and Re-Exports)
-trade_data <- imports %>%
-  left_join(exports, by = "Data Series") %>%
-  left_join(re_exports, by = "Data Series") %>%
+# Convert values to numeric (handle commas safely)
+trade_data2 <- trade_data2 %>%
   mutate(
-    Total_Exports = Exports + Re_Exports,  # Include Re-Exports in total exports
-    Trade_Balance = Total_Exports - Imports,  # Adjusted trade balance
-    Trade_Sign = ifelse(Trade_Balance >= 0, "+", "-")  # Surplus or Deficit indicator
+    `Export Value` = as.numeric(gsub(",", "", `Export Value`)),
+    `Import Value` = as.numeric(gsub(",", "", `Import Value`)),
+    Total_Trade = `Export Value` + `Import Value`
   )
 
-# Remove 'Total All Markets' to focus on individual countries
-trade_data <- trade_data %>%
-  filter(!grepl("Total", `Data Series`))
-
-# Check the updated dataset
-print(head(trade_data))
-
-```
-```{r}
-trade_summary <- trade_data %>%
-  summarise(
-    Total_Imports = sum(Imports, na.rm = TRUE),
-    Total_Exports = sum(Exports, na.rm = TRUE),
-    Total_ReExports = sum(Re_Exports, na.rm = TRUE),
-    Adjusted_Trade_Balance = sum(Trade_Balance, na.rm = TRUE)  # Updated balance
-  )
-
-print(trade_summary)
-```
-```{r}
-# Select only 2024 values and remove duplicates
-imports <- df_MTC$T1 %>%
-  select(`Data Series`, `2024`) %>%
-  distinct() %>%
-  rename(Imports = `2024`)
-
-exports <- df_MTC$T2 %>%
-  select(`Data Series`, `2024`) %>%
-  distinct() %>%
-  rename(Exports = `2024`)
-
-re_exports <- df_MTC$T3 %>%
-  select(`Data Series`, `2024`) %>%
-  distinct() %>%
-  rename(Re_Exports = `2024`)
-```
-
-```{r}
-# Merge datasets based on 'Data Series' (Country/Continent Name)
-trade_data <- imports %>%
-  left_join(exports, by = "Data Series") %>%
-  left_join(re_exports, by = "Data Series") %>%
-  mutate(
-    Total_Exports = Exports + Re_Exports,  # Include Re-Exports in total exports
-    Trade_Balance = Total_Exports - Imports,  # Adjusted trade balance
-    Trade_Sign = ifelse(Trade_Balance >= 0, "+", "-")  # Surplus or Deficit indicator
-  ) %>%
-  filter(!grepl("Total", `Data Series`))  # Remove total market row
-
-# Check the updated dataset
-print(head(trade_data))
-```
-
-```{r}
-table(duplicated(trade_data$`Data Series`))
-```
-```{r}
-# Define list of continent names
-continents <- c("Asia", "America", "Africa", "Europe", "Oceania")
-
-# Filter dataset to keep only continent names
-df_continents <- trade_data %>%
-  filter(`Data Series` %in% continents)
-
-print(df_continents)  # Verify continent-level data
-```
-
-```{r}
-df_countries <- trade_data %>%
-  filter(!(`Data Series` %in% continents))  # Exclude continents
-
-print(df_countries)  # Verify country-level data
-```
-```{r}
-df_top20 <- df_countries %>%
-  mutate(Total_Trade = Imports + Total_Exports) %>%
+# Select Top 20 Countries based on total trade in 2024
+top_countries2 <- trade_data2 %>%
+  filter(Year == 2024 & !is.na(Total_Trade) & Total_Trade > 0) %>%
   arrange(desc(Total_Trade)) %>%
-  top_n(20, Total_Trade)
-```
+  head(20) %>%
+  pull(`Data Series`)
 
-```{r}
-# Check if Imports or Exports contain NA or Inf
-summary(df_countries$Imports_Billions)
-summary(df_countries$Total_Exports_Billions)
-```
+# Allow users to select additional countries
+selected_countries2 <- top_countries2  # Default selection is Top 20
 
-```{r}
-# Convert to billions for better scaling
-df_top20 <- df_top20 %>%
-  mutate(
-    Imports_Billions = Imports / 1000,
-    Total_Exports_Billions = Total_Exports / 1000
-  )
+# Filter dataset to include top 20 + selected countries
+trade_data_filtered2 <- trade_data2 %>%
+  filter(`Data Series` %in% selected_countries2)
 
-# Create an improved plot
-p2 <- ggplot(df_top20, aes(
-  x = Imports_Billions, 
-  y = Total_Exports_Billions, 
-  size = abs(Trade_Balance), 
-  fill = Trade_Sign, 
-  text = `Data Series`  # Explicitly map country name for tooltip
-)) +
-  
-  # Bubble plot
-  geom_point(shape = 21, alpha = 0.8) +
-  
-  # Color scheme for trade surplus/deficit
-  scale_fill_manual(values = c("+" = "green", "-" = "red")) +
-  
-  # Scale axes
-  scale_x_continuous(labels = label_number(scale = 1)) + 
-  scale_y_continuous(labels = label_number(scale = 1)) +
-  
-  # Labels and styling
+# Convert Year to factor for animation
+trade_data_filtered2$Year <- as.factor(trade_data_filtered2$Year)
+
+# Create Animated Bubble Plot
+gg <- ggplot(trade_data_filtered2, 
+       aes(x = `Export Value`, 
+           y = `Import Value`, 
+           size = Total_Trade, 
+           colour = `Data Series`)) +
+  geom_point(aes(frame = Year), 
+             alpha = 0.7, 
+             show.legend = TRUE) +  # Keep legend for comparison
+  scale_size(range = c(3, 15)) +  # Adjust bubble size
   labs(
-    title = "Top 20 Countries: Trade Performance",
-    x = "Imports (S$ Billion)",
-    y = "Exports (S$ Billion, Including Re-Exports)",
-    size = "Trade Balance Magnitude",
-    fill = "Surplus / Deficit"
+    title = "Trade Comparison Over Time",
+    x = "Exports (S$ Billion)",
+    y = "Imports (S$ Billion)",
+    color = "Country"
   ) +
-  
-  theme_minimal() +
-  theme(
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    axis.title = element_text(size = 14),
-    axis.text = element_text(size = 12),
-    legend.position = "right"
-  )
+  theme_minimal()
 
-# Convert to plotly & explicitly include "text" for tooltip
-p2_plotly <- ggplotly(p2, tooltip = c("text", "x", "y", "size"))
-p2_plotly
+# Convert to interactive Plotly animation
+bubble_plotly <- ggplotly(gg) %>%
+  animation_opts(frame = 1000, easing = "linear", redraw = TRUE)
+
+# Display the interactive plot
+bubble_plotly
 ```
 
-### Data Transformation
-
-
-```{r}
-# Define continents
-continents <- c("America", "Asia", "Europe", "Oceania", "Africa")
-
-# Extract continent-level data
-df_continents <- df_countries %>%
-  mutate(
-    Continent = case_when(
-      `Data Series` %in% c("Antigua And Barbuda", "Argentina", "Bahamas", "Bermuda", "Brazil", "Canada", 
-                           "Chile", "Colombia", "Costa Rica", "Cuba", "Dominican Rep", "Ecuador", 
-                           "El Salvador", "Guatemala", "Guyana", "Honduras", "Jamaica", "Mexico", 
-                           "Netherlands Antilles", "Panama", "Paraguay", "Peru", "Puerto Rico", 
-                           "St. Vincent And The Grenadines", "Trinidad And Tobago", "United States", 
-                           "United States Virgin Islands", "Uruguay", "Venezuela") ~ "America",
-      
-      `Data Series` %in% c("Afghanistan", "Bahrain", "Bangladesh", "Brunei", "Cambodia", "China", 
-                           "Christmas Island", "Hong Kong", "India", "Indonesia", "Iran", "Iraq", 
-                           "Israel", "Japan", "Jordan", "Kazakhstan", "Korea, Dem Peo Rep Of", 
-                           "Korea, Rep Of", "Kuwait", "Lao", "Lebanon", "Macao", "Malaysia", "Maldives", 
-                           "Mongolia", "Myanmar", "Nepal", "Oman", "Pakistan", "Philippines", "Qatar", 
-                           "Saudi Arabia", "Sri Lanka", "Syria", "Taiwan", "Thailand", "Turkiye", 
-                           "United Arab Emirates", "Viet Nam", "Yemen") ~ "Asia",
-      
-      `Data Series` %in% c("Austria", "Belarus", "Belgium", "Bulgaria", "Croatia", "Cyprus", 
-                           "Czech Rep", "Denmark", "Estonia", "Finland", "France", "Germany", 
-                           "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", 
-                           "Luxembourg", "Malta", "Netherlands", "Norway", "Poland", "Portugal", 
-                           "Romania", "Russia", "Slovakia", "Slovenia", "Spain", "Svalbard And Jan Mayen Islands", 
-                           "Sweden", "Switzerland", "Ukraine", "United Kingdom") ~ "Europe",
-      
-      `Data Series` %in% c("Antarctica", "Australia", "Fiji", "French Polynesia", "Guam", "Marshall Islands", 
-                           "New Caledonia", "New Zealand", "Northern Mariana Islands", "Papua New Guinea", 
-                           "Samoa", "Solomon Islands", "Vanuatu") ~ "Oceania",
-      
-      `Data Series` %in% c("Algeria", "Angola", "Benin", "Cameroon", "Cape Verde", "Comoros", 
-                           "Congo, Dem Rep Of", "Cote D'ivoire", "Djibouti", "Egypt", "Ethiopia", 
-                           "Gabon", "Ghana", "Guinea", "Kenya", "Liberia", "Libya", "Madagascar", 
-                           "Mauritius", "Morocco", "Mozambique", "Nigeria", "Reunion", "Seychelles", 
-                           "Sierra Leone", "Somalia", "South Africa", "Sudan", "Swaziland", "Tanzania", 
-                           "Tunisia", "Zambia", "Zimbabwe") ~ "Africa",
-      
-      TRUE ~ "Other"
-    )
-  ) %>%
-  group_by(Continent) %>%
-  summarise(
-    Imports = sum(Imports, na.rm = TRUE),
-    Total_Exports = sum(Total_Exports, na.rm = TRUE),
-    Trade_Balance = sum(Total_Exports - Imports, na.rm = TRUE)
-  ) %>%
-  mutate(
-    Imports_Billions = Imports / 1000,
-    Total_Exports_Billions = Total_Exports / 1000,
-    Trade_Sign = ifelse(Trade_Balance >= 0, "+", "-")
-  ) %>%
-  filter(Continent %in% continents)  # Keep only valid continents
-```
-
-```{r}
-# Create continent-level bubble chart
-p3 <- ggplot(df_continents, aes(x = Imports_Billions, y = Total_Exports_Billions, size = abs(Trade_Balance), fill = Continent)) +
-  
-  # Bubble plot
-  geom_point(shape = 21, alpha = 0.8) +
-  
-  # Scale axes (remove "B", since the title already mentions Billion)
-  scale_x_continuous(labels = label_number(scale = 1)) + 
-  scale_y_continuous(labels = label_number(scale = 1)) +
-  
-  # Labels and styling
-  labs(
-    title = "Trade Performance by Continent",
-    x = "Imports (S$ Billion)",
-    y = "Exports (S$ Billion, Including Re-Exports)",
-    size = "Trade Balance",
-    fill = "Continent"
-  ) +
-  
-  theme_minimal() +
-  theme(
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    axis.title = element_text(size = 14),
-    axis.text = element_text(size = 12),
-    legend.position = "right"
-  )
-
-# Convert to interactive plotly chart
-p3_plotly <- ggplotly(p3, tooltip = c("x", "y", "size", "label"))
-p3_plotly
-```
-
+The Merchandise Trade Performance with Major Trading Partners, 2024 chart is made into an animated bubble plot. This bubble plot shows the trend of the top 20 total trade countries. User can click play and watch the trade movements of each country. User can select if they want to include or exclude a country for easy visualization.
 
 ## 2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024
 
+Steps: Create a drop down list in the chart. Add years to the drop down list. Create import chart Create export chart Display the bar chart.
+
+```{r}
+# Keep only necessary columns (2015-2024)
+export_data1 <- mtexport_data[, 1:11]
+import_data1 <- mtimport_data[, 1:11]
+
+# Convert from wide to long format
+export_long <- export_data1 %>%
+  pivot_longer(cols = -`Data Series`, names_to = "Year", values_to = "Export Value") %>%
+  mutate(Year = as.numeric(Year))
+
+import_long <- import_data1 %>%
+  pivot_longer(cols = -`Data Series`, names_to = "Year", values_to = "Import Value") %>%
+  mutate(Year = as.numeric(Year))
+
+# Unique years in dataset
+years <- unique(export_long$Year)
+
+# Create a dropdown list including "All"
+dropdown_buttons <- list(
+  list(
+    label = "All",
+    method = "update",
+    args = list(list(visible = rep(TRUE, length(years))))
+  )
+)
+
+# Add individual years to dropdown
+for (year in years) {
+  dropdown_buttons <- append(dropdown_buttons, list(
+    list(
+      label = as.character(year),
+      method = "update",
+      args = list(list(visible = export_long$Year == year))
+    )
+  ))
+}
+
+# Export Chart with Dropdown Selection for "All" + Years
+export_plot <- ggplot(export_long, aes(x = `Data Series`, y = `Export Value`, fill = as.factor(Year))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Exports Comparison", x = "Commodity", y = "Export Value (S$ Billion)", fill = "Year") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+export_plotly <- ggplotly(export_plot) %>%
+  layout(
+    updatemenus = list(
+      list(
+        buttons = dropdown_buttons,
+        direction = "down",
+        x = 1.15, y = 1.15
+      )
+    )
+  )
+
+# Import Chart with Dropdown Selection for "All" + Years
+import_plot <- ggplot(import_long, aes(x = `Data Series`, y = `Import Value`, fill = as.factor(Year))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Imports Comparison", x = "Commodity", y = "Import Value (S$ Billion)", fill = "Year") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+import_plotly <- ggplotly(import_plot) %>%
+  layout(
+    updatemenus = list(
+      list(
+        buttons = dropdown_buttons,
+        direction = "down",
+        x = 1.15, y = 1.15
+      )
+    )
+  )
+
+# Display the interactive charts
+export_plotly
+import_plotly
+```
+
+This import and export bar chart is a makeover of the Non-Oil Merchandise Trade By Major Commodity Sections, 2024 chart. There are a few improvements made. This bar chart allows users to easily visualize changes across the years. Users are able to select years for comparison by clicking on the years in the legend. Users can view individual years from the drop down list or reset the chart by selecting "All". The tooltip provides information on the import/export values
+
 ## 3. Major Trading Partners For Trade in Services, 2023
 
+Steps: Calculate trade balance. Select top 10 countries for total trade in services. Create import heatmap. Create export heatmap. Create trade balance heatmap. Viridis was used for its good colour scheme. Add in interactive tooltip.
+
+```{r}
+# Ensure all column names are characters before selecting
+colnames(tis_import_data) <- as.character(colnames(tis_import_data))
+colnames(tis_export_data) <- as.character(colnames(tis_export_data))
+
+# Keep only necessary columns (Data Series + last 10 years: 2013-2023)
+years_to_keep <- as.character(2023:2013)  # Ensure column names are characters
+tis_import_data <- tis_import_data %>% select(all_of(c("Data Series", years_to_keep)))
+tis_export_data <- tis_export_data %>% select(all_of(c("Data Series", years_to_keep)))
+
+# Convert all columns to character before pivoting
+tis_import_data <- tis_import_data %>% mutate(across(everything(), as.character))
+tis_export_data <- tis_export_data %>% mutate(across(everything(), as.character))
+
+# Convert Import Data from Wide to Long Format
+import_long3 <- tis_import_data %>%
+  pivot_longer(cols = -`Data Series`, names_to = "Year", values_to = "Import Value") %>%
+  mutate(Year = as.numeric(Year),  
+         `Import Value` = as.numeric(gsub("[^0-9.]", "", `Import Value`)))  # Remove non-numeric characters
+
+# Convert Export Data from Wide to Long Format
+export_long3 <- tis_export_data %>%
+  pivot_longer(cols = -`Data Series`, names_to = "Year", values_to = "Export Value") %>%
+  mutate(Year = as.numeric(Year),  
+         `Export Value` = as.numeric(gsub("[^0-9.]", "", `Export Value`)))  # Remove non-numeric characters
+
+# Merge import and export data
+trade_data3 <- merge(import_long3, export_long3, by = c("Data Series", "Year"))
+
+# Convert values to numeric and compute Trade Balance
+trade_data3 <- trade_data3 %>%
+  mutate(
+    `Import Value` = as.numeric(`Import Value`),  # Ensure numeric conversion
+    `Export Value` = as.numeric(`Export Value`),  # Ensure numeric conversion
+    Trade_Balance = `Export Value` - `Import Value`,  # Trade Balance
+    Total_Trade = `Import Value` + `Export Value`
+  )
+
+# Handle potential NAs (optional)
+trade_data3 <- trade_data3 %>%
+  mutate(
+    `Import Value` = replace_na(`Import Value`, 0),
+    `Export Value` = replace_na(`Export Value`, 0),
+    Trade_Balance = replace_na(Trade_Balance, 0)
+  )
+
+# Calculate percentage of total import/export for each year
+trade_data3 <- trade_data3 %>%
+  group_by(Year) %>%
+  mutate(
+    Import_Percent = (`Import Value` / sum(`Import Value`, na.rm = TRUE)) * 100,
+    Export_Percent = (`Export Value` / sum(`Export Value`, na.rm = TRUE)) * 100
+  ) %>%
+  ungroup()
+
+# Select Top 10 Countries based on total trade in 2023
+top_countries3 <- trade_data3 %>%
+  filter(Year == 2023 & !is.na(Total_Trade) & Total_Trade > 0) %>%
+  arrange(desc(Total_Trade)) %>%
+  head(10) %>%
+  pull(`Data Series`)
+
+# Filter dataset to include only top 10 countries
+trade_data_filtered3 <- trade_data3 %>%
+  filter(`Data Series` %in% top_countries3)
+
+# Create Export Heatmap (Without Import or Trade Balance in Tooltip)
+export_heatmap <- ggplot(trade_data_filtered3, aes(
+    x = Year, y = `Data Series`, fill = `Export Value`,
+    text = paste(
+      "Country: ", `Data Series`, "<br>",
+      "Year: ", Year, "<br>",
+      "Export: $", scales::comma(`Export Value`), "<br>",
+      "Share of Total: ", round(Export_Percent, 2), "%"
+    )
+)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "plasma", direction = -1) +  
+  labs(title = "Export Heatmap (2013-2023)",
+       x = "Year",
+       y = "Country",
+       fill = "Export Value") +
+  theme_minimal()
+
+# Convert to interactive plot with tooltip
+export_heatmap <- ggplotly(export_heatmap, tooltip = "text")
+
+# Create Import Heatmap (Without Export or Trade Balance in Tooltip)
+import_heatmap <- ggplot(trade_data_filtered3, aes(
+    x = Year, y = `Data Series`, fill = `Import Value`,
+    text = paste(
+      "Country: ", `Data Series`, "<br>",
+      "Year: ", Year, "<br>",
+      "Import: $", scales::comma(`Import Value`), "<br>",
+      "Share of Total: ", round(Import_Percent, 2), "%"
+    )
+)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "inferno", direction = -1) +  
+  labs(title = "Import Heatmap (2013-2023)",
+       x = "Year",
+       y = "Country",
+       fill = "Import Value") +
+  theme_minimal()
+
+# Convert to interactive plot with tooltip
+import_heatmap <- ggplotly(import_heatmap, tooltip = "text")
+
+# Create Trade Balance Heatmap
+trade_balance_heatmap <- ggplot(trade_data_filtered3, aes(
+    x = Year, y = `Data Series`, fill = Trade_Balance,
+    text = paste(
+      "Country: ", `Data Series`, "<br>",
+      "Year: ", Year, "<br>",
+      "Trade Balance: $", scales::comma(Trade_Balance)
+    )
+)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "red", mid = "white", high = "green", midpoint = 0) +  # Red for Deficit, Green for Surplus
+  labs(title = "Trade Balance Heatmap (2013-2023)",
+       x = "Year",
+       y = "Country",
+       fill = "Trade Balance") +
+  theme_minimal()
+
+# Convert to interactive plot with tooltip
+trade_balance_heatmap <- ggplotly(trade_balance_heatmap, tooltip = "text")
+
+# Display heatmaps
+export_heatmap
+import_heatmap
+trade_balance_heatmap
+```
+
+This 3 heat map is the make over of Major Trading Partners For Trade in Services, 2023 chart. Instead of comparing two years data, this heat map allows us to compare 10 years data. Heat map allows user to visualize the trend where the value increases with shade. The interactive tool tip shows percentage total trade and value. The trade balance heat map allows clear visualization if a country is positive or negative. We can notice that even though United States of America has increasing trade in services import and export, the trade balance is getting worse from 9,000 to 56,000 over 10 years. Trade balance with Australia on the other hand is improving from 6,000 to 31,000
+
+# Time-Series Analysis
+
+Three Time-series analysis was done on the Merchandise Trade dataset.
+
+## Time-Series Analysis on Top Merchandise Trade Countries
+
+ggplotly was used to find the import and export trend of the top merchandise trade countries. User can opt to add or remove countries for comparison by selecting in the legend.
+
+```{r}
+# Rename first column dynamically
+colnames(mtcimport_data)[1] <- "Country"
+colnames(mtcexport_data)[1] <- "Country"
+
+# Identify only numeric year columns
+valid_years <- colnames(mtcimport_data)[-1]  # Exclude "Country"
+valid_years <- valid_years[str_detect(valid_years, "^[0-9]{4}$")]  # Keep only year-like values
+
+# Convert wide format to long format
+import_longg <- mtcimport_data %>%
+  select(Country, all_of(valid_years)) %>%
+  pivot_longer(cols = -Country, names_to = "Year", values_to = "Import_Value") %>%
+  mutate(Year = as.integer(Year),  # Ensure Year is numeric
+         Import_Value = as.numeric(gsub(",", "", as.character(Import_Value))))  # Convert Import Value
+
+export_longg <- mtcexport_data %>%
+  select(Country, all_of(valid_years)) %>%
+  pivot_longer(cols = -Country, names_to = "Year", values_to = "Export_Value") %>%
+  mutate(Year = as.integer(Year),
+         Export_Value = as.numeric(gsub(",", "", as.character(Export_Value))))
+
+# Remove any NA values introduced by coercion
+import_longg <- import_longg %>% filter(!is.na(Year) & !is.na(Import_Value))
+export_longg <- export_longg %>% filter(!is.na(Year) & !is.na(Export_Value))
+
+# Select the top 10 countries for imports and exports based on 2024 data
+top_import_countries <- import_longg %>%
+  filter(Year == 2024) %>%
+  arrange(desc(Import_Value)) %>%
+  slice(1:10) %>%
+  pull(Country)
+
+top_export_countries <- export_longg %>%
+  filter(Year == 2024) %>%
+  arrange(desc(Export_Value)) %>%
+  slice(1:10) %>%
+  pull(Country)
+
+# Filter data for top countries
+import_filteredd <- import_longg %>%
+  filter(Country %in% top_import_countries)
+
+export_filteredd <- export_longg %>%
+  filter(Country %in% top_export_countries)
+
+# Remove missing values and scale export values
+import_filteredd <- import_filteredd %>%
+  filter(!is.na(Year) & !is.na(Import_Value)) %>%
+  mutate(Import_Value = Import_Value / 1000)  # Convert to 'thousands'
+
+# Create Export Plot
+import_plot <- ggplot(import_filteredd, aes(x = Year, y = Import_Value, color = Country, 
+                                           text = paste("Year:", Year, "<br>Import Value (K):", Import_Value), 
+                                           group = Country)) +  
+  geom_line(linewidth = 1) +  
+  labs(title = "Top 10 Importing Countries Over 10 Years", 
+       y = "Import Value (in Thousands)", 
+       x = "Year") +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::comma) +  # Format large numbers
+  scale_x_continuous(breaks = seq(min(import_filteredd$Year), max(import_filteredd$Year), 1))  # ✅ Fix: Force whole year labels
+
+ggplotly(import_plot, tooltip = "text")
+
+# Remove missing values and scale export values
+export_filteredd <- export_filteredd %>%
+  filter(!is.na(Year) & !is.na(Export_Value)) %>%
+  mutate(Export_Value = Export_Value / 1000)  # Convert to 'thousands'
+
+# Create Export Plot
+export_plot <- ggplot(export_filteredd, aes(x = Year, y = Export_Value, color = Country, 
+                                           text = paste("Year:", Year, "<br>Export Value (K):", Export_Value), 
+                                           group = Country)) +  
+  geom_line(linewidth = 1) +  
+  labs(title = "Top 10 Exporting Countries Over 10 Years", 
+       y = "Export Value (in Thousands)", 
+       x = "Year") +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::comma) +  # Format large numbers
+  scale_x_continuous(breaks = seq(min(export_filteredd$Year), max(export_filteredd$Year), 1))  # ✅ Fix: Force whole year labels
+
+ggplotly(export_plot, tooltip = "text")
+```
+
+Key Observation (Import): - China is one of the largest importer, however it is on a downward trend since 2022. - Taiwan is on an upward trend, being 4th place in 2015 and overtaking China to be the top importer in 2024. - Imports showed a decline in 2022 to 2023, which could be due to post-pandemic.
+
+Key Observation (Export): - China consistently maintains the highest export value. - United States and Vietnam have shown strong upwards trend, suggesting growth in export oriented industries. - Many countries dipped in 2020, likely due to COVID-19.
+
+### Time-Series Analysis on Merchandise Category
+
+This Time-series Chart shows the import and export trends for various product categories over the period 2015 to 2024. Each coloured line represents a different data series. User can opt to include or exclude a product category by selecting from the legend.
+
+```{r}
+# Function to clean and reshape monthly data
+clean_monthly_data <- function(df, value_name) {
+  df_long <- df %>%
+    pivot_longer(cols = -`Data Series`, names_to = "Month", values_to = value_name) %>%
+    filter(str_detect(Month, "^[0-9]{4} [A-Za-z]{3}$")) %>%  # Keep only YYYY MMM format
+    mutate(
+      Date = as.Date(parse_date_time(Month, "Y b")),  # Convert "YYYY MMM" to Date format
+      Year = year(Date),
+      Month = month(Date)
+    ) %>%
+    select(`Data Series`, Date, !!value_name) %>%
+    arrange(Date)
+  
+  return(df_long)
+}
+
+# Clean Import & Export Data
+import_long <- clean_monthly_data(import_data5, "Import Value")
+export_long <- clean_monthly_data(export_data5, "Export Value")
+
+# Merge Import and Export datasets
+trade_data <- left_join(import_long, export_long, by = c("Data Series", "Date"))
+
+# Create an interactive line chart for Imports
+import_plot <- ggplot(import_long, aes(x = Date, y = `Import Value`, color = `Data Series`)) +
+  geom_line(size = 0.7) +  # Thinner lines
+  geom_point(size = 0.3) +   # Smaller points
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year") +  # Show only yearly labels
+  labs(title = "Import Trends (Jan 2015 - Dec 2024)", x = "Year", y = "Import Value") +
+  theme_minimal()
+
+# Convert ggplot to interactive Plotly chart
+ggplotly(import_plot)
+
+# Create an interactive line chart for Export 
+export_plot <- ggplot(export_long, aes(x = Date, y = `Export Value`, color = `Data Series`)) +
+  geom_line(size = 0.7) +  # Thinner lines
+  geom_point(size = 0.3) +   # Smaller points
+  scale_x_date(date_labels = "%Y", date_breaks = "1 year") +  # Show only yearly labels
+  labs(title = "Export Trends (Jan 2015 - Dec 2024)", x = "Year", y = "Import Value") +
+  theme_minimal()
+
+# Convert ggplot to interactive Plotly chart
+ggplotly(export_plot)
+```
+
+Key observations (Import): - Machinery & Transport Equipment shows a spike from 2021 to 2025. - This suggest higher domestic demand for machinery, possibly for industrial expansion or infrastructure projects.
+
+Key observations (Export): - Machinery & Transport Equipment is significantly higher than all other categories. - Exports in this category shows a steady growth. - Miscellaneous Manufactured Articles shows a steady growth. - Chemicals and Chemical Products is showing a declining trend since 2023.
+
+### STL Decomposition for Machinery and Transport Equipment
+
+Machinery & Transport Equipment is the top commodity for import and export, therefore a deeper analysis was done to uncover the trends.
+
+```{r}
+# Reshape Data to Long Format
+export_long <- export_data5 %>%
+  pivot_longer(cols = matches("^[0-9]{4} [A-Za-z]{3}$"), names_to = "Month_Year", values_to = "Export Value") %>%
+  filter(`Data Series` == "Machinery & Transport Equipment") %>%
+  separate(Month_Year, into = c("Year", "Month"), sep = " ") %>%  # Split into Year and Month
+  mutate(
+    Year = as.integer(Year),  
+    Month = match(Month, month.abb),  # Convert "Jan" -> 1, "Feb" -> 2, etc.
+    Date = yearmonth(paste0(Year, "-", Month))  # Convert to yearmonth format
+  ) %>%
+  select(Date, `Export Value`) %>%
+  as_tsibble(index = Date)
+
+# Apply STL Decomposition
+export_long %>%
+  model(STL_Export = STL(`Export Value` ~ trend(window = 13) + season(window = "periodic"))) %>%
+  components() %>%
+  autoplot() +
+  scale_x_yearmonth(date_breaks = "1 year", date_labels = "%Y") +  # Show yearly labels
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
+```
+
+```{r}
+```
+
+```{r}
+ls("package:fable")
+
+```
+
+The STL decomposition (Seasonal-Trend-Loess decomposition) splits the Machinery & Transport Equipment export data into 3 key components: 
+
+1. Top Panel: Export Value - This is the actual observed data over time. - The overall trend appears upwards from 2015 to Dec 2024, showing that exports have increased over the period.
+
+2.  Second Panel: Trend
+
+-   The trend shows a smooth, long-term increase.
+-   2019 to 2021 there is slight dip, likely due to COVID-19 and global trade disruptions.
+-   Post-2021, exports recover and continued growing, suggesting an increased global demand and economic stability.
+
+3.  Third Panel: Season_Year
+
+-   This captures repeating annual patterns.
+-   The peaks and troughs indicate certain months consistently have higher/lower export activity.
+-   This suggest a predictable export cycle, which could be influenced by manufacturing schedules or trade policies.
+
+4.  Bottom Panel: Reminder
+
+-   This represents unexplained variations that are not captured by trend or seasonality.
+-   Large spikes suggest external shocks like Economic downturns, trade restrictions etc.
+
+# References
+Singapore International Trade. (n.d.). Retrieved from <https://www.singstat.gov.sg/modules/infographics/singapore-international-trade> 
+
+Latest Data. (n.d.-a). Retrieved from <https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/merchandise-trade/latest-data> 
+
+Latest Data. (n.d.-a). Retrieved from <https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/trade-in-services/latest-data> 
+
+Kenton, W. (n.d.-a). Balanced trade: Meaning, Pros and Cons, faqs. Retrieved from <https://www.investopedia.com/terms/b/balanced-trade.asp> 
 
 
-# Time-Series Analysis & Time-Series Forecating
 
-1.  To study the data and see if able to uncover more information.
-2.  To see if able to use other ways to visualize the data and to provide more insights.
