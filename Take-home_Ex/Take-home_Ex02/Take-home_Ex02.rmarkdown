@@ -5,6 +5,8 @@ date: "February 26, 2025"
 date-modified: "last-modified" 
 ---
 
+
+
 # The Task
 
 1.  Select three data visualization from [Singstat](https://www.singstat.gov.sg/modules/infographics/singapore-international-trade). Comment on the pros and cons and provide sketches of the make-over.
@@ -21,12 +23,16 @@ I have chosen these data visualization to critic because there seems to be areas
 
 ## 1. Merchandise Trade Performance with Major Trading Partners, 2024
 
+
+
 ```{r}
 #| echo: false
 
 
 knitr::include_graphics("MTradePerf2024 new.png")
 ```
+
+
 
 This chart shows the merchandise trade performance with major partners in 2024. The bubbles reflects Singapore's total merchandise trade value with the trading partner. The line between the green region and blue region in the chart represents the Trade Balance Line. The closer the white circle is to the line, the more balance the trade.
 
@@ -45,12 +51,16 @@ The trade balance—the difference between a country's exports and imports—is 
 
 ## 2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024
 
+
+
 ```{r}
 #| echo: false
 
 
 knitr::include_graphics("NonOilMTrade2024 new.png")
 ```
+
+
 
 This chart shows the breakdown of non-oil merchandise trade by major commodity sections in 2024. It gives insights on the major commodity sections. Machinery & Transport Equipment is the highest followed by Chemicals & Chemical Products.
 
@@ -68,12 +78,16 @@ This chart shows the breakdown of non-oil merchandise trade by major commodity s
 
 ## 3. Major Trading Partners For Trade in Services, 2023
 
+
+
 ```{r}
 #| echo: false
 
 
 knitr::include_graphics("MTPartner20232 new.png")
 ```
+
+
 
 ### Pros
 
@@ -93,6 +107,8 @@ knitr::include_graphics("MTPartner20232 new.png")
 
 ### 1. Sketch for Merchandise Trade Performance with Major Trading Partners, 2024
 
+
+
 ```{r}
 #| echo: false
 
@@ -100,9 +116,13 @@ knitr::include_graphics("MTPartner20232 new.png")
 knitr::include_graphics("sketch1.png")
 ```
 
+
+
 Scatter plot will be used to show the trend of Merchandise Trade. A slider will be added to display the amount of import/export for each country over the years. Bubble size will be according to total trade.
 
 ### 2. Sketch for Non-Oil Merchandise Trade By Major Commodity Sections, 2024
+
+
 
 ```{r}
 #| echo: false
@@ -111,9 +131,13 @@ Scatter plot will be used to show the trend of Merchandise Trade. A slider will 
 knitr::include_graphics("sketch2.png")
 ```
 
+
+
 Bar chart will be used to show the trend of the different commodities across 10 years. Chart will be interactive where users are able to select the type of commodity for comparison.
 
 ### 3. Sketch for Major Trading Partners For Trade in Services, 2023
+
+
 
 ```{r}
 #| echo: false
@@ -121,6 +145,8 @@ Bar chart will be used to show the trend of the different commodities across 10 
 
 knitr::include_graphics("sketch3.png")
 ```
+
+
 
 Trade in services refers to the exchange of intangible economic activities between countries, such as financial services, IT services, tourism, education, consulting, and transportation. Unlike merchandise trade, which involves physical goods, trade in services revolves around expertise, skills, and knowledge. Heat map will be used to show trend of import, export and also trade balance. Tooltip will be added where user can see the values when the mouse hover over each cell.
 
@@ -130,6 +156,8 @@ Trade in services refers to the exchange of intangible economic activities betwe
 
 Load pacman::p_load
 
+
+
 ```{r}
 #| echo: false
 
@@ -137,11 +165,15 @@ Load pacman::p_load
 pacman::p_load(readxl, readr, ggplot2, tidyverse, dplyr, plotly, scales, lubridate, feasts, viridis, stringr, tsibble, fable, seasonal, fabletools, patchwork)
 ```
 
+
+
 pacman::p_load(readxl, readr, ggplot2, tidyverse, dplyr, plotly, scales, lubridate, feasts, viridis, stringr, tsibble, fable, seasonal, fabletools, patchwork)
 
 ### Importing the data
 
 Load the dataset: 1. Trade in services dataset [Singstat Trade in Services](https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/trade-in-services/latest-data) 2. Merchandise trade by Country dataset [Singstat Merchandise Trade](https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/merchandise-trade/latest-data) 3. Merchandise trade dataset [Singstat Merchandise Trade](https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/merchandise-trade/latest-data)
+
+
 
 ```{r}
 #| code-fold: true
@@ -178,6 +210,8 @@ mtimport_data <- read_csv("data/Merchandise_Trade_Import.csv")
 import_data5 <- read_csv("data/Merchandise_Trade_Import.csv", show_col_types = FALSE)
 export_data5 <- read_csv("data/Merchandise_Trade_Export.csv", show_col_types = FALSE)
 ```
+
+
 
 ### Data Processing
 
@@ -189,6 +223,8 @@ The dataset has been cleaned in excel and saved as csv. Irrelevant values were r
 
 Steps: Export and Import data were merged. Values were converted to numeric. Top 20 total trade countries were selected. Add in filter to allow user to select countries. Create animated bubble plot. Display the animated bubble plot.
 
+
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Click here to show the R code"
@@ -330,12 +366,16 @@ bubble_plotly <- ggplotly(gg) %>%
 # Display the interactive plot
 bubble_plotly
 ```
+
+
 The Merchandise Trade Performance with Major Trading Partners, 2024 chart is made into an animated bubble plot. This bubble plot shows the trend of the top 20 total trade countries. User can click play and watch the trade movements of each country. User can select if they want to include or exclude a country for easy visualization.
 
 ## 2. Non-Oil Merchandise Trade By Major Commodity Sections, 2024
 
 Steps: Create a drop down list in the chart. Add years to the drop down list. Create import chart Create export chart Display the bar chart.
 
+
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Click here to show the R code"
@@ -435,6 +475,7 @@ combined_plotly <- subplot(
 combined_plotly
 
 ```
+
 ```{r}
 #| echo: false
 
@@ -532,6 +573,8 @@ combined_plotly <- subplot(
 combined_plotly
 
 ```
+
+
 
 This import and export bar chart is a makeover of the Non-Oil Merchandise Trade By Major Commodity Sections, 2024 chart. There are a few improvements made. This bar chart allows users to easily visualize changes across the years. Users are able to select years for comparison by clicking on the years in the legend. Users can view individual years from the drop down list or reset the chart by selecting "All". The tooltip provides information on the import/export values
 
@@ -539,6 +582,8 @@ This import and export bar chart is a makeover of the Non-Oil Merchandise Trade 
 
 Steps: Calculate trade balance. Select top 10 countries for total trade in services. Create import heatmap. Create export heatmap. Create trade balance heatmap. Add in interactive tooltip.
 
+
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Click here to show the R code"
@@ -872,6 +917,8 @@ combined_plotly <- subplot(
 combined_plotly
 
 ```
+
+
 
 This 3 heat map is the make over of Major Trading Partners For Trade in Services, 2023 chart. Instead of comparing two years data, this heat map allows us to compare 10 years data. Heat map allows user to visualize the trend where the value increases with shade. The interactive tool tip shows percentage total trade and value. The trade balance heat map allows clear visualization if a country is positive or negative. We can notice that even though United States of America has increasing trade in services import and export, the trade balance is getting worse from 9,000 to 56,000 over 10 years. Trade balance with Australia on the other hand is improving from 6,000 to 31,000
 
@@ -883,6 +930,8 @@ Three Time-series analysis was done on the Merchandise Trade dataset.
 
 ggplotly was used to find the import and export trend of the top merchandise trade countries. User can opt to add or remove countries for comparison by selecting in the legend.
 
+
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Click here to show the R code"
@@ -1112,6 +1161,8 @@ combined_plotly <- subplot(
 # Display the fixed combined chart
 combined_plotly
 ```
+
+
 
 Key Observation (Import): - China is one of the largest importer, however it is on a downward trend since 2022. - Taiwan is on an upward trend, being 4th place in 2015 and overtaking China to be the top importer in 2024. - Imports showed a decline in 2022 to 2023, which could be due to post-pandemic.
 
@@ -1121,6 +1172,8 @@ Key Observation (Export): - China consistently maintains the highest export valu
 
 This Time-series Chart shows the import and export trends for various product categories over the period 2015 to 2024. Each coloured line represents a different data series. User can opt to include or exclude a product category by selecting from the legend.
 
+
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Click here to show the R code"
@@ -1276,6 +1329,8 @@ combined_plotly <- subplot(
 # Display the final interactive plot
 combined_plotly
 ```
+
+
 
 
 Key observations (Import): - Machinery & Transport Equipment shows a spike from 2021 to 2025. - This suggest higher domestic demand for machinery, possibly for industrial expansion or infrastructure projects.
@@ -1286,6 +1341,8 @@ Key observations (Export): - Machinery & Transport Equipment is significantly hi
 
 Machinery & Transport Equipment is the top commodity for import and export, therefore a deeper analysis was done to uncover the trends.
 
+
+
 ```{r}
 #| code-fold: true
 #| code-summary: "Click here to show the R code"
@@ -1337,6 +1394,8 @@ export_long %>%
   scale_x_yearmonth(date_breaks = "1 year", date_labels = "%Y") +  # Show yearly labels
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels for readability
 ```
+
+
 
 
 The STL decomposition (Seasonal-Trend-Loess decomposition) splits the Machinery & Transport Equipment export data into 3 key components:
@@ -1369,3 +1428,4 @@ Latest Data. (n.d.-a). Retrieved from <https://www.singstat.gov.sg/find-data/sea
 Latest Data. (n.d.-a). Retrieved from <https://www.singstat.gov.sg/find-data/search-by-theme/trade-and-investment/trade-in-services/latest-data>
 
 Kenton, W. (n.d.-a). Balanced trade: Meaning, Pros and Cons, faqs. Retrieved from <https://www.investopedia.com/terms/b/balanced-trade.asp>
+
