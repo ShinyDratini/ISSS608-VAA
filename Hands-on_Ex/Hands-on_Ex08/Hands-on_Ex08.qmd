@@ -114,6 +114,7 @@ tmap_mode("plot")
 qtm(mpsz_pop2020, 
     fill = "DEPENDENCY")
 ```
+
 #### Creating a choropleth map by using tmap’s elements
 
 ```{r}
@@ -133,6 +134,8 @@ tm_shape(mpsz_pop2020)+
   tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
              position = c("left", "bottom"))
 ```
+
+
 #### Drawing a base map
 
 ```{r}
@@ -415,42 +418,42 @@ tmap_mode("view")
 ### It all started with an interactive point symbol map
 
 ```{r}
-tm_shape(sgpools_sf)+
-tm_bubbles(col = "red",
+tm_shape(sgpools_sf) + 
+  tm_bubbles(fill = "red",
            size = 1,
-           border.col = "black",
-           border.lwd = 1)
+           col = "black",
+           lwd = 1)
 ```
 ### Lets make it proportional
 
 To draw a proportional symbol map, we need to assign a numerical variable to the size visual attribute. The code chunks below show that the variable Gp1Gp2Winnings is assigned to size visual attribute.
 
 ```{r}
-tm_shape(sgpools_sf)+
-tm_bubbles(col = "red",
-           size = "Gp1Gp2 Winnings",
-           border.col = "black",
-           border.lwd = 1)
+tm_shape(sgpools_sf) + 
+  tm_bubbles(fill = "red",
+             size = "Gp1Gp2 Winnings",
+             col = "black",
+             lwd = 1)
 ```
 ### Lets give it a different colour
 
 ```{r}
-tm_shape(sgpools_sf)+
-tm_bubbles(col = "OUTLET TYPE", 
-          size = "Gp1Gp2 Winnings",
-          border.col = "black",
-          border.lwd = 1)
+tm_shape(sgpools_sf) + 
+  tm_bubbles(fill = "OUTLET TYPE", 
+             size = "Gp1Gp2 Winnings",
+             col = "black",
+             lwd = 1)
 ```
 ### I have a twin brothers :)
 
 An impressive and little-know feature of tmap’s view mode is that it also works with faceted plots. The argument sync in tm_facets() can be used in this case to produce multiple maps with synchronised zoom and pan settings.
 
 ```{r}
-tm_shape(sgpools_sf) +
-  tm_bubbles(col = "OUTLET TYPE", 
-          size = "Gp1Gp2 Winnings",
-          border.col = "black",
-          border.lwd = 1) +
+tm_shape(sgpools_sf) + 
+  tm_bubbles(fill = "OUTLET TYPE", 
+             size = "Gp1Gp2 Winnings",
+             col = "black",
+             lwd = 1) + 
   tm_facets(by= "OUTLET TYPE",
             nrow = 1,
             sync = TRUE)
